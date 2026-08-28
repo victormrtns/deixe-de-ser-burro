@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from importlib import import_module
 from uuid import UUID
 
@@ -9,6 +10,9 @@ from httpx import ASGITransport, AsyncClient
 from pydantic import ValidationError
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db import Database, get_session
+from app.main import create_app
 
 
 def test_production_settings_require_secure_cookies() -> None:
@@ -39,6 +43,49 @@ def test_settings_expose_required_operational_defaults() -> None:
     assert settings.cookie_secure is False
     assert settings.max_cover_bytes == 5_000_000
     assert settings.log_level == "INFO"
+
+
+def test_settings_reject_a_synchronous_postgresql_driver() -> None:
+    config = import_module("app.config")
+
+    with pytest.raises(ValidationError, match=r"postgresql\+psycopg"):
+        config.Settings(
+            database_url="postgresql://user:password@localhost/entrelinhas",
+            public_origin="http://localhost:5173",
+            files_root="./data/files",
+        )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("session_ttl_hours", 0), ("max_cover_bytes", -1)],
+)
+def test_settings_reject_non_positive_operational_limits(field: str, value: int) -> None:
+    config = import_module("app.config")
+    values = {
+        "database_url": "postgresql+psycopg://user:password@localhost/entrelinhas",
+        "public_origin": "http://localhost:5173",
+        "files_root": "./data/files",
+        field: value,
+    }
+
+    with pytest.raises(ValidationError):
+        config.Settings(**values)
+
+
+@pytest.mark.parametrize(
+    "public_origin",
+    ["http://localhost:5173/private", "http://localhost:5173?debug=true"],
+)
+def test_settings_reject_a_non_canonical_public_origin(public_origin: str) -> None:
+    config = import_module("app.config")
+
+    with pytest.raises(ValidationError, match="origin without path, query, or fragment"):
+        config.Settings(
+            database_url="postgresql+psycopg://user:password@localhost/entrelinhas",
+            public_origin=public_origin,
+            files_root="./data/files",
+        )
 
 
 async def test_app_error_uses_stable_envelope_without_exposing_its_cause() -> None:
@@ -119,3 +166,50 @@ async def test_readiness_rejects_a_database_behind_head(
     finally:
         await session.execute(text("UPDATE alembic_version SET version_num = '0001_initial'"))
         await session.commit()
+
+
+async def test_readiness_reports_a_missing_migration_schema_without_leaking_sql(
+    session: AsyncSession, client: AsyncClient
+) -> None:
+    await session.execute(text("ALTER TABLE alembic_version RENAME TO alembic_version_missing"))
+    await session.commit()
+
+    try:
+        result = await client.get("/api/health/ready")
+        assert result.status_code == 503
+        assert result.json()["error"]["code"] == "migration_not_ready"
+        assert "alembic_version" not in result.text
+        assert "UndefinedTable" not in result.text
+    finally:
+        await session.execute(text("ALTER TABLE alembic_version_missing RENAME TO alembic_version"))
+        await session.commit()
+
+
+async def test_readiness_reports_an_unavailable_database_without_leaking_connection_details() -> (
+    None
+):
+    database = Database(
+        "postgresql+psycopg://entrelinhas:entrelinhas@127.0.0.1:1/entrelinhas_test"
+        "?connect_timeout=1"
+    )
+
+    async def unavailable_session() -> AsyncIterator[AsyncSession]:
+        async with database.session() as current_session:
+            yield current_session
+
+    app = create_app()
+    app.dependency_overrides[get_session] = unavailable_session
+    try:
+        async with AsyncClient(
+            transport=ASGITransport(app=app, raise_app_exceptions=False),
+            base_url="http://test",
+        ) as test_client:
+            result = await test_client.get("/api/health/ready")
+    finally:
+        app.dependency_overrides.clear()
+        await database.dispose()
+
+    assert result.status_code == 503
+    assert result.json()["error"]["code"] == "database_not_ready"
+    assert "127.0.0.1" not in result.text
+    assert "entrelinhas" not in result.text

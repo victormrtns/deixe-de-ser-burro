@@ -32,7 +32,7 @@ def upgrade() -> None:
         sa.Column("updated_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
         sa.CheckConstraint(
             "email = lower(btrim(email)) AND char_length(email) > 0",
-            name="ck_author_accounts_email_normalized",
+            name="email_normalized",
         ),
         sa.PrimaryKeyConstraint("id", name="pk_author_accounts"),
         sa.UniqueConstraint("email", name="uq_author_accounts_email"),
@@ -53,8 +53,8 @@ def upgrade() -> None:
         sa.Column("private_cover_path", sa.Text(), nullable=True),
         sa.Column("created_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
-        sa.CheckConstraint("char_length(btrim(title)) > 0", name="ck_books_title_not_blank"),
-        sa.CheckConstraint("char_length(btrim(author)) > 0", name="ck_books_author_not_blank"),
+        sa.CheckConstraint("char_length(btrim(title)) > 0", name="title_not_blank"),
+        sa.CheckConstraint("char_length(btrim(author)) > 0", name="author_not_blank"),
         sa.PrimaryKeyConstraint("id", name="pk_books"),
     )
 
@@ -90,11 +90,11 @@ def upgrade() -> None:
         sa.Column("status", sa.String(length=32), server_default="draft", nullable=False),
         sa.Column("created_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
-        sa.CheckConstraint("char_length(btrim(title)) > 0", name="ck_writings_title_not_blank"),
-        sa.CheckConstraint("version_number >= 1", name="ck_writings_version_positive"),
+        sa.CheckConstraint("char_length(btrim(title)) > 0", name="title_not_blank"),
+        sa.CheckConstraint("version_number >= 1", name="version_positive"),
         sa.CheckConstraint(
             "status IN ('draft', 'cleanup_scheduled', 'published')",
-            name="ck_writings_status",
+            name="status",
         ),
         sa.ForeignKeyConstraint(
             ["book_id"], ["books.id"], name="fk_writings_book_id", ondelete="RESTRICT"
@@ -113,10 +113,10 @@ def upgrade() -> None:
         sa.Column("source_range", sa.Text(), nullable=False),
         sa.Column("reason", sa.String(length=32), nullable=False),
         sa.Column("created_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
-        sa.CheckConstraint("version_number >= 1", name="ck_writing_versions_version_positive"),
+        sa.CheckConstraint("version_number >= 1", name="version_positive"),
         sa.CheckConstraint(
             "reason IN ('created', 'manual_save', 'restored', 'published')",
-            name="ck_writing_versions_reason",
+            name="reason",
         ),
         sa.ForeignKeyConstraint(
             ["writing_id"],
@@ -128,6 +128,7 @@ def upgrade() -> None:
         sa.UniqueConstraint(
             "writing_id", "version_number", name="uq_writing_versions_writing_version"
         ),
+        sa.UniqueConstraint("writing_id", "id", name="uq_writing_versions_writing_id_id"),
     )
     op.create_index("ix_writing_versions_writing_id", "writing_versions", ["writing_id"])
 
@@ -152,23 +153,33 @@ def upgrade() -> None:
         sa.Column("cleanup_completed_at", TIMESTAMP, nullable=True),
         sa.Column("created_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
-        sa.CheckConstraint("reading_minutes >= 1", name="ck_publications_reading_minutes"),
-        sa.CheckConstraint("state IN ('published', 'withdrawn')", name="ck_publications_state"),
+        sa.CheckConstraint("reading_minutes >= 1", name="reading_minutes"),
+        sa.CheckConstraint("state IN ('published', 'withdrawn')", name="state"),
         sa.CheckConstraint(
-            "cleanup_due_at >= published_at", name="ck_publications_cleanup_after_publish"
+            "slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'",
+            name="slug_canonical",
+        ),
+        sa.CheckConstraint(
+            "book_slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'",
+            name="book_slug_canonical",
+        ),
+        sa.CheckConstraint("cleanup_due_at >= published_at", name="cleanup_after_publish"),
+        sa.ForeignKeyConstraint(
+            ["writing_id"], ["writings.id"], name="fk_publications_writing_id", ondelete="CASCADE"
         ),
         sa.ForeignKeyConstraint(
-            ["writing_id"], ["writings.id"], name="fk_publications_writing_id", ondelete="RESTRICT"
-        ),
-        sa.ForeignKeyConstraint(
-            ["writing_version_id"],
-            ["writing_versions.id"],
-            name="fk_publications_writing_version_id",
-            ondelete="RESTRICT",
+            ["writing_id", "writing_version_id"],
+            ["writing_versions.writing_id", "writing_versions.id"],
+            name="fk_publications_writing_version_pair",
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id", name="pk_publications"),
     )
-    op.create_index("ix_publications_writing_id", "publications", ["writing_id"])
+    op.create_index(
+        "ix_publications_writing_version_pair",
+        "publications",
+        ["writing_id", "writing_version_id"],
+    )
     op.create_index("ix_publications_writing_version_id", "publications", ["writing_version_id"])
     op.create_index("ix_publications_published_at", "publications", ["published_at"])
     op.create_index(
@@ -185,6 +196,14 @@ def upgrade() -> None:
         unique=True,
         postgresql_where=sa.text("state = 'published'"),
     )
+    op.create_index(
+        "ix_publications_pending_cleanup",
+        "publications",
+        ["cleanup_due_at", "id"],
+        postgresql_where=sa.text(
+            "state = 'published' AND cleanup_cancelled_at IS NULL AND cleanup_completed_at IS NULL"
+        ),
+    )
 
     op.create_table(
         "publication_topics",
@@ -192,8 +211,8 @@ def upgrade() -> None:
         sa.Column("publication_id", UUID, nullable=False),
         sa.Column("topic", sa.String(length=200), nullable=False),
         sa.Column("position", sa.Integer(), nullable=False),
-        sa.CheckConstraint("char_length(btrim(topic)) > 0", name="ck_publication_topics_not_blank"),
-        sa.CheckConstraint("position >= 0", name="ck_publication_topics_position"),
+        sa.CheckConstraint("char_length(btrim(topic)) > 0", name="not_blank"),
+        sa.CheckConstraint("position >= 0", name="position"),
         sa.ForeignKeyConstraint(
             ["publication_id"],
             ["publications.id"],
@@ -219,7 +238,7 @@ def upgrade() -> None:
         sa.Column("featured_publication_id", UUID, nullable=True),
         sa.Column("created_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
         sa.Column("updated_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
-        sa.CheckConstraint("singleton_key", name="ck_editorial_settings_singleton_key"),
+        sa.CheckConstraint("singleton_key", name="singleton_key"),
         sa.ForeignKeyConstraint(
             ["featured_publication_id"],
             ["publications.id"],
@@ -249,7 +268,7 @@ def upgrade() -> None:
         sa.Column("created_at", TIMESTAMP, server_default=sa.func.now(), nullable=False),
         sa.CheckConstraint(
             "response_status IS NULL OR response_status BETWEEN 100 AND 599",
-            name="ck_idempotency_keys_response_status",
+            name="response_status",
         ),
         sa.ForeignKeyConstraint(
             ["author_id"],

@@ -16,6 +16,8 @@ from sqlalchemy import text
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
+from app.config import ASYNC_POSTGRES_DRIVER
+
 _SCHEMA_PATTERN = re.compile(r"^entrelinhas_test_[a-z0-9_]+_[0-9a-f]{32}$")
 
 
@@ -25,8 +27,8 @@ def _required_test_database_url() -> URL:
         pytest.fail("TEST_DATABASE_URL is required for PostgreSQL integration tests")
 
     url = make_url(raw_url)
-    if not url.drivername.startswith("postgresql"):
-        pytest.fail("TEST_DATABASE_URL must begin with postgresql")
+    if url.drivername != ASYNC_POSTGRES_DRIVER:
+        pytest.fail(f"TEST_DATABASE_URL must use {ASYNC_POSTGRES_DRIVER}")
     return url
 
 
@@ -43,7 +45,7 @@ def _schema_url(database_url: URL, schema_name: str) -> str:
     ).render_as_string(hide_password=False)
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture
 async def migrated_database_url() -> AsyncIterator[str]:
     database_url = _required_test_database_url()
     worker = re.sub(r"[^a-z0-9_]", "_", os.getenv("PYTEST_XDIST_WORKER", "main").lower())

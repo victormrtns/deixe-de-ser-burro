@@ -4,8 +4,10 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Self
 
-from pydantic import AnyHttpUrl, PostgresDsn, model_validator
+from pydantic import AnyHttpUrl, PositiveInt, PostgresDsn, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ASYNC_POSTGRES_DRIVER = "postgresql+psycopg"
 
 
 class Settings(BaseSettings):
@@ -16,10 +18,30 @@ class Settings(BaseSettings):
     public_origin: AnyHttpUrl
     files_root: Path
     session_cookie_name: str = "entrelinhas_session"
-    session_ttl_hours: int = 168
+    session_ttl_hours: PositiveInt = 168
     cookie_secure: bool = False
-    max_cover_bytes: int = 5_000_000
+    max_cover_bytes: PositiveInt = 5_000_000
     log_level: str = "INFO"
+
+    @field_validator("database_url")
+    @classmethod
+    def database_uses_async_psycopg(cls, value: PostgresDsn) -> PostgresDsn:
+        if value.scheme != ASYNC_POSTGRES_DRIVER:
+            raise ValueError(f"database URL must use {ASYNC_POSTGRES_DRIVER}")
+        return value
+
+    @field_validator("public_origin")
+    @classmethod
+    def public_origin_is_canonical(cls, value: AnyHttpUrl) -> AnyHttpUrl:
+        if (
+            value.username is not None
+            or value.password is not None
+            or value.path not in (None, "/")
+            or value.query is not None
+            or value.fragment is not None
+        ):
+            raise ValueError("public origin must be an origin without path, query, or fragment")
+        return value
 
     @model_validator(mode="after")
     def production_is_secure(self) -> Self:
