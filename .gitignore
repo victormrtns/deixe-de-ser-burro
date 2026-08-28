@@ -1,0 +1,25 @@
+.worktrees/
+.superpowers/sdd/
+
+# JavaScript
+node_modules/
+dist/
+playwright-report/
+test-results/
+coverage/
+
+# Python
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.py[cod]
+
+# Local configuration and generated data
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+

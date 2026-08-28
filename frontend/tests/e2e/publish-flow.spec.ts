@@ -1,0 +1,2 @@
+import { expect, test } from '@playwright/test'
+test('artigo público não expõe artefatos privados', async ({ page }) => { await page.goto('/artigos/ritual-antes-do-foco'); await expect(page.getByRole('article')).toContainText('Ritual antes do foco'); await expect(page.getByText('Transcrição original')).toHaveCount(0); await expect(page.getByRole('button', { name: 'Aceitar alteração' })).toHaveCount(0) })

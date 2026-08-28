@@ -1,0 +1,23 @@
+.prose {
+  color: var(--color-text);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  line-height: 1.76;
+}
+
+.prose > * { max-width: 68ch; }
+.prose h1,
+.prose h2,
+.prose h3 {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.prose blockquote {
+  margin-inline: 0;
+  padding-left: 20px;
+  border-left: 3px solid var(--color-annotation);
+}
+
+.prose code { font-family: var(--font-code); }

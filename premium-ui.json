@@ -1,0 +1,18 @@
+{
+  "profile": "product-admin",
+  "sourceRoots": ["frontend/src"],
+  "locale": "pt-BR",
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": ["Form", "Scrollbar", "Toast", "CRUD"],
+  "requiredCommands": ["unit", "e2e", "accessibility", "premium"],
+  "commands": {
+    "unit": "npm --prefix frontend run test:unit",
+    "e2e": "npm --prefix frontend run test:e2e",
+    "accessibility": "npm --prefix frontend run test:a11y",
+    "premium": "npm --prefix frontend run verify:premium"
+  },
+  "evidence": {
+    "crudFullFlow": "frontend/tests/e2e/library-flow.spec.ts",
+    "failurePaths": "frontend/tests/e2e/workspace-failures.spec.ts"
+  }
+}

@@ -1,0 +1,3 @@
+import { Dialog } from '@/ui/Dialog'
+import { useSuggestion } from './SuggestionProvider'
+export function ConflictDialog() { const { state, resetConflict } = useSuggestion(); return <Dialog open={state === 'conflict'} onOpenChange={(open) => { if (!open) resetConflict() }} title="O texto mudou em outro lugar" description="Recarregue a versão atual antes de aplicar esta sugestão."><div className="suggestion-actions"><button type="button" onClick={resetConflict}>Recarregar versão atual</button><button type="button" onClick={() => void navigator.clipboard?.writeText('Minhas alterações')}>Copiar minhas alterações</button><button type="button" onClick={resetConflict}>Cancelar</button></div></Dialog> }

@@ -1,0 +1,2 @@
+import { expect, test } from '@playwright/test'
+test('o documento continua editável quando o assistente é interrompido', async ({ page }) => { await page.goto('/studio/escritas/writing-01'); await page.getByRole('button', { name: /Conversa/ }).click(); await page.getByLabel('Mensagem').fill('Organize este trecho'); await page.getByRole('button', { name: 'Enviar' }).click(); await page.getByRole('button', { name: 'Parar geração' }).click(); await page.getByRole('button', { name: /Documento/ }).click(); await expect(page.getByLabel('Conteúdo Markdown')).toBeEditable() })
