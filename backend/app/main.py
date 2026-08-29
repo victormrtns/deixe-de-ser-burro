@@ -5,6 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.router import router as auth_router
 from app.db import get_session
 from app.errors import AppError, app_error_handler
 
@@ -31,6 +32,7 @@ async def readiness(session: AsyncSession) -> dict[str, str]:
 def create_app() -> FastAPI:
     app = FastAPI(title="Entrelinhas API")
     app.add_exception_handler(AppError, app_error_handler)
+    app.include_router(auth_router)
 
     @app.get("/api/health/live")
     async def live() -> dict[str, str]:

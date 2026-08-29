@@ -4,7 +4,14 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal, Self
 
-from pydantic import AnyHttpUrl, PositiveInt, PostgresDsn, field_validator, model_validator
+from pydantic import (
+    AnyHttpUrl,
+    NonNegativeInt,
+    PositiveInt,
+    PostgresDsn,
+    field_validator,
+    model_validator,
+)
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ASYNC_POSTGRES_DRIVER = "postgresql+psycopg"
@@ -19,6 +26,7 @@ class Settings(BaseSettings):
     files_root: Path
     session_cookie_name: str = "entrelinhas_session"
     session_ttl_hours: PositiveInt = 168
+    session_touch_interval_seconds: NonNegativeInt = 300
     cookie_secure: bool = False
     max_cover_bytes: PositiveInt = 5_000_000
     log_level: str = "INFO"

@@ -40,6 +40,7 @@ def test_settings_expose_required_operational_defaults() -> None:
     assert settings.environment == "development"
     assert settings.session_cookie_name == "entrelinhas_session"
     assert settings.session_ttl_hours == 168
+    assert settings.session_touch_interval_seconds == 300
     assert settings.cookie_secure is False
     assert settings.max_cover_bytes == 5_000_000
     assert settings.log_level == "INFO"
@@ -58,7 +59,11 @@ def test_settings_reject_a_synchronous_postgresql_driver() -> None:
 
 @pytest.mark.parametrize(
     ("field", "value"),
-    [("session_ttl_hours", 0), ("max_cover_bytes", -1)],
+    [
+        ("session_ttl_hours", 0),
+        ("session_touch_interval_seconds", -1),
+        ("max_cover_bytes", -1),
+    ],
 )
 def test_settings_reject_non_positive_operational_limits(field: str, value: int) -> None:
     config = import_module("app.config")

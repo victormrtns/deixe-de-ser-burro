@@ -83,6 +83,7 @@ async def session(migrated_database_url: str) -> AsyncIterator[AsyncSession]:
 
 @pytest_asyncio.fixture
 async def client(migrated_database_url: str) -> AsyncIterator[AsyncClient]:
+    from app.config import Settings, get_settings
     from app.db import Database, get_session
     from app.main import create_app
 
@@ -94,6 +95,12 @@ async def client(migrated_database_url: str) -> AsyncIterator[AsyncClient]:
 
     app = create_app()
     app.dependency_overrides[get_session] = override_session
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        environment="test",
+        database_url=migrated_database_url,
+        public_origin="http://localhost:5173",
+        files_root="./data/test-files",
+    )
     try:
         async with AsyncClient(
             transport=ASGITransport(app=app, raise_app_exceptions=False),
