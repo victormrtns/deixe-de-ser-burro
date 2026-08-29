@@ -1,79 +1,81 @@
 # Handoff — Books Blog AI / Entrelinhas
 
-## Objetivo da próxima sessão
+## Estado atual (2026-08-28, fase backend CRUD concluída)
 
-Retomar este projeto com o fluxo Superpowers. Ler a especificação aprovada e o plano de frontend existente antes de fazer perguntas ou alterar arquivos. A próxima etapa provável é incorporar os padrões de código, testes, QA e gates de validação fornecidos pelo autor, revisar o plano caso esses padrões exijam mudanças e escolher o fluxo de execução.
+O backend P0 de CRUD, versões, publicação e leitura pública está implementado e
+verificado, no monorepo (`frontend/` + `backend/` + `compose.yaml` + `ops/`).
+O worktree `backend-crud` foi consolidado em `main` e removido.
 
-## Estado atual
+### Implementado
 
-- O brainstorming de produto e arquitetura foi concluído e aprovado.
-- O produto é uma aplicação pessoal para transformar anotações manuscritas sobre livros em artigos Markdown por meio de um ciclo de áudios curtos, prompts, edição manual, sugestões de IA, revisão e publicação.
-- Especificação do produto:
-  - `docs/superpowers/specs/2026-08-28-ai-books-learning-blog-design.md`
-- Plano de identidade visual e frontend:
-  - `docs/superpowers/plans/2026-08-28-visual-identity-frontend.md`
-- O plano de frontend possui 12 tarefas e 65 passos, já verificados estruturalmente.
-- Referências visuais existentes:
-  - `design.md`
-  - `tailwind.css`
-- Skills React fornecidas pelo autor:
-  - `docs/patterns/vercel-composition-patterns/`
-  - `docs/patterns/vercel-react-best-practices/`
-- Nenhuma implementação foi iniciada e nenhuma dependência foi instalada.
-- `git status` não reconheceu a pasta como um repositório Git válido; não há commits da especificação ou do plano.
+- FastAPI + SQLAlchemy 2 async + Alembic (`0001_initial`, head verificado por readiness).
+- Autor único: bootstrap por CLI, sessão por cookie HttpOnly (hash persistido),
+  verificação de `Origin` em mutações, CORS fechado.
+- Livros: CRUD com `Idempotency-Key`, contagem de escritas, capas locais
+  validadas (Pillow, limites de bytes/pixels, re-encode sem metadados,
+  escrita atômica, chaves opacas).
+- Escritas: CRUD, versões imutáveis (`writing_versions`), autosave com
+  compare-and-swap por `expectedVersion` (`409 writing_version_conflict`),
+  restauração que anexa versão (`restored`), workspace com coleções diferidas vazias.
+- Publicação: snapshot congelado idempotente (slug canônico com sufixo em
+  colisão ativa), janela de 3 dias, cancelamento de limpeza, retirada,
+  destaque editorial manual com fallback.
+- Cleanup: `CleanupRunner` com `FOR UPDATE SKIP LOCKED`, uma transação por
+  publicação, registro de purgadores (vazio nesta fase), CLI
+  `cleanup-due-publications` e `systemd timer` em `ops/`.
+- Leitura pública: projeções allowlisted (`/api/public/landing|articles|books`
+  e detalhes por slug), capas públicas imutáveis em `/api/public/files/{key}`.
+- Observabilidade: middleware com `X-Request-ID`, um evento JSON por request
+  (sem headers, corpos ou mensagens de exceção), envelope 500 estável.
+- Frontend: `httpApi` migrado para os contratos reais (auth, books, writings,
+  versões, publicação, público) com `ApiError` do envelope; chat/áudio/
+  sugestões/uso continuam explicitamente no mock. A aplicação ainda monta
+  `createMockApi()` em `main.tsx` — a troca para `httpApi` é da próxima fase.
+- Infra: `compose.yaml` (db sem porta externa, backend em loopback 8000,
+  frontend 5173, one-shots `migrate`/`bootstrap-author`/`cleanup` no perfil
+  `tools`), Dockerfile com migrações, scripts de backup criptografado (`age`)
+  e drill de restauração em `ops/`, runbook `ops/deploy.md`.
 
-## Decisões principais
+### Comandos verificados
 
-- Stack: React, Python/FastAPI, PostgreSQL e Docker Compose; deploy futuro em VPS simples.
-- Desenvolvimento local primeiro, com arquitetura preparada para uso online.
-- Teto operacional de R$ 50–70/mês para VPS e IA, considerando cerca de cinco horas de áudio mensais.
-- Um autor privado e leitores públicos sem autenticação.
-- Hierarquia: biblioteca → vários livros → várias escritas/artigos por livro.
-- Conversas, áudios, transcrições, links, sugestões e versões pertencem a uma escrita específica.
-- Markdown é o formato canônico, com Mermaid, código e LaTeX no preview.
-- O autor intercala áudios curtos, prompts, links e edição manual continuamente.
-- A IA nunca altera o Markdown diretamente; toda mudança passa por comparação e aprovação.
-- O contexto padrão do chat inclui a escrita, suas transcrições, referências, mensagens recentes e resumo acumulado.
-- Um chat principal é obrigatório; chats auxiliares são P1 opcional.
-- Links podem ser processados temporariamente; título, URL e resumo ficam associados à conversa.
-- Publicar congela uma versão pública. O contexto privado é removido após três dias de recuperação.
-- Frontend planejado como React 19 + TypeScript + Vite, usando contratos tipados e MSW antes do backend.
-- A identidade adapta a referência creme/papel para leitura e marginalia. `Entrelinhas` é apenas o nome de trabalho atual.
-- Componentes usam composição, compound components, providers focados e variantes explícitas.
-- Performance: SWR, imports diretos, code splitting, preview deferido e separação entre bundles públicos e privados.
-- Acessibilidade: WCAG 2.2 AA.
+```bash
+# suíte completa (183 passed; PostgreSQL 16 obrigatório)
+cd backend && TEST_DATABASE_URL=postgresql+psycopg://entrelinhas:entrelinhas@localhost:5432/entrelinhas_test uv run pytest
+uv run ruff format --check . && uv run ruff check . && uv run mypy app
+uv run python scripts/check_public_schema.py
 
-## Decisões pendentes
+# stack local (verificado: cold start, readiness e persistência pós-restart)
+docker compose up -d db && docker compose run --rm migrate && docker compose up -d backend
+curl -fsS http://127.0.0.1:8000/api/health/ready
 
-- Receber e aplicar os padrões de código, testes, QA e gates automatizados do autor.
-- Confirmar ou substituir o nome de trabalho `Entrelinhas` antes da identidade visual final.
-- Escolher a execução:
-  1. subagent-driven development, com revisão entre tarefas; ou
-  2. execução inline, com checkpoints.
-- Estabelecer um repositório/branch Git válido antes de seguir os passos de commit.
+# ciclo completo com projeto descartável (verificado nesta sessão)
+cd backend && RUN_COMPOSE_TESTS=1 uv run pytest tests/e2e/test_restart_and_restore.py
 
-## Primeiras ações recomendadas
+# frontend (todos verdes)
+npm --prefix frontend run test:unit && npm --prefix frontend run typecheck \
+  && npm --prefix frontend run build && npm --prefix frontend run verify:premium \
+  && npm --prefix frontend run verify:bundles
+```
 
-1. Ler integralmente a especificação e o plano indicados acima.
-2. Ler os novos padrões de engenharia fornecidos pelo autor.
-3. Comparar esses padrões com as restrições globais e os gates da Tarefa 12 do plano.
-4. Atualizar o plano apenas onde necessário; não repetir o brainstorming já aprovado.
-5. Pedir aprovação para alterações materiais em identidade, arquitetura, privacidade, retenção ou fluxo.
-6. Confirmar o estado do Git e escolher o fluxo de execução do Superpowers.
+### Limitações ambientais registradas
 
-## Skills sugeridas
+- Playwright E2E não roda nesta máquina: o Chromium não lança por falta de
+  bibliotecas de sistema (`sudo npx playwright install-deps`). Nenhuma
+  verificação de navegador é reivindicada nesta fase.
+- Drill real de restauração exige `age` instalado e um artefato de backup;
+  os scripts foram validados por `bash -n` + contrato estático.
 
-- `superpowers:using-superpowers`
-- `superpowers:receiving-code-review`, se os padrões vierem como feedback sobre o plano
-- `superpowers:writing-plans`, somente se o plano precisar ser revisado
-- `superpowers:subagent-driven-development` ou `superpowers:executing-plans`, conforme a execução escolhida
-- `superpowers:test-driven-development`
-- `superpowers:verification-before-completion`
-- `frontend-design`
-- `frontend-design-premium:frontend-design-premium`
-- `vercel-composition-patterns`
-- `vercel-react-best-practices`
+### Explicitamente adiado (sem código nesta fase)
 
-## Prompt para retomada
+IA (SDKs, chamadas, chaves), chat, áudio, transcrição, sugestões, medição de
+orçamento de IA, Redis, Celery, S3, múltiplos autores, busca e paginação
+pública. O `WorkspacePayload` devolve `messages/audio/suggestions` vazios de
+propósito.
 
-Leia `docs/handoffs/current.md`, depois leia integralmente a especificação do produto e o plano de frontend referenciados nele. Use o Superpowers e continue do estado aprovado, sem repetir o discovery. Primeiro incorpore os padrões de código, testes, QA e gates que eu fornecer; depois reconcilie o plano de frontend e solicite minha aprovação para qualquer mudança material antes da implementação.
+## Próximos passos prováveis
+
+1. Trocar `createMockApi()` por `httpApi` no frontend (sessão real, biblioteca
+   real) e ligar as telas privadas de verdade.
+2. Fase de IA: chat contextual, transcrição de áudio e sugestões, com contratos
+   já reservados no workspace.
+3. Deploy na VPS seguindo `ops/deploy.md`.
