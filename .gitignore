@@ -23,3 +23,6 @@ __pycache__/
 *.log
 .DS_Store
 
+
+# TypeScript incremental build info
+*.tsbuildinfo
