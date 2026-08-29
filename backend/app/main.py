@@ -11,6 +11,7 @@ from app.db import get_session
 from app.errors import AppError, app_error_handler, request_validation_error_handler
 from app.files.router import router as public_files_router
 from app.library.router import router as library_router
+from app.public_read.router import router as public_read_router
 from app.publishing.router import router as publishing_router
 from app.writings.router import router as writings_router
 
@@ -43,6 +44,7 @@ def create_app() -> FastAPI:
     app.include_router(writings_router)
     app.include_router(publishing_router)
     app.include_router(public_files_router)
+    app.include_router(public_read_router)
 
     @app.get("/api/health/live")
     async def live() -> dict[str, str]:
