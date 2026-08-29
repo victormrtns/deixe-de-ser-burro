@@ -148,6 +148,22 @@ async def list_versions(
     )
 
 
+async def restore_version(
+    session: AsyncSession, writing_id: UUID, source_version: int, expected_version: int
+) -> WritingDto:
+    await _require_writing(session, writing_id)
+    source = await persistence.find_version(session, writing_id, source_version)
+    if source is None:
+        raise _not_found("Versão não encontrada.")
+    return await _apply_versioned_change(
+        session,
+        writing_id,
+        expected_version,
+        {"markdown": source.markdown, "title": source.title, "source_range": source.source_range},
+        reason="restored",
+    )
+
+
 async def get_version(
     session: AsyncSession, writing_id: UUID, version_number: int
 ) -> WritingVersionDto:
@@ -198,9 +214,12 @@ def _decode_cursor(cursor: str | None) -> int | None:
     if cursor is None:
         return None
     try:
-        return int(base64.urlsafe_b64decode(cursor.encode()).decode())
+        version_number = int(base64.urlsafe_b64decode(cursor.encode()).decode())
     except (binascii.Error, UnicodeDecodeError, ValueError) as error:
         raise AppError("validation_error", "Cursor de paginação inválido.", 400) from error
+    if version_number < 1:
+        raise AppError("validation_error", "Cursor de paginação inválido.", 400)
+    return version_number
 
 
 def _to_dto(writing: Writing) -> WritingDto:

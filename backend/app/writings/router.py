@@ -16,6 +16,7 @@ from app.writings.schemas import (
     WritingCreateRequest,
     WritingDto,
     WritingMetadataRequest,
+    WritingRestoreRequest,
     WritingSaveRequest,
     WritingVersionDto,
     WritingVersionPage,
@@ -89,6 +90,18 @@ async def list_versions(
     limit: Annotated[int, Query(ge=1, le=200)] = service.DEFAULT_VERSION_PAGE_SIZE,
 ) -> WritingVersionPage:
     return await service.list_versions(session, writing_id, cursor=cursor, limit=limit)
+
+
+@router.post("/writings/{writing_id}/versions/{version_number}/restore", response_model=WritingDto)
+async def restore_version(
+    writing_id: UUID,
+    version_number: int,
+    payload: WritingRestoreRequest,
+    session: SessionDependency,
+) -> WritingDto:
+    return await service.restore_version(
+        session, writing_id, version_number, payload.expected_version
+    )
 
 
 @router.get("/writings/{writing_id}/versions/{version_number}", response_model=WritingVersionDto)

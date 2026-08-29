@@ -43,6 +43,10 @@ class WritingMetadataRequest(ApiModel):
         return None if value is None else _reject_blank(value)
 
 
+class WritingRestoreRequest(ApiModel):
+    expected_version: int = Field(ge=1)
+
+
 class WritingDto(ApiModel):
     id: UUID
     book_id: UUID
