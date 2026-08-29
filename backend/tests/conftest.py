@@ -87,8 +87,13 @@ async def session(migrated_database_url: str) -> AsyncIterator[AsyncSession]:
         await database.dispose()
 
 
+@pytest.fixture
+def files_root(tmp_path: Path) -> Path:
+    return tmp_path / "files"
+
+
 @pytest_asyncio.fixture
-async def client(migrated_database_url: str) -> AsyncIterator[AsyncClient]:
+async def client(migrated_database_url: str, files_root: Path) -> AsyncIterator[AsyncClient]:
     from app.config import Settings, get_settings
     from app.db import Database, get_session
     from app.main import create_app
@@ -105,7 +110,7 @@ async def client(migrated_database_url: str) -> AsyncIterator[AsyncClient]:
         environment="test",
         database_url=migrated_database_url,
         public_origin="http://localhost:5173",
-        files_root="./data/test-files",
+        files_root=files_root,
     )
     try:
         async with AsyncClient(

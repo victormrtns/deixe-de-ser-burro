@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.auth.router import router as auth_router
 from app.db import get_session
 from app.errors import AppError, app_error_handler, request_validation_error_handler
+from app.files.router import router as public_files_router
 from app.library.router import router as library_router
 
 EXPECTED_ALEMBIC_HEAD = "0001_initial"
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RequestValidationError, request_validation_error_handler)
     app.include_router(auth_router)
     app.include_router(library_router)
+    app.include_router(public_files_router)
 
     @app.get("/api/health/live")
     async def live() -> dict[str, str]:
