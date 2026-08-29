@@ -16,6 +16,8 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
+# FK targets must be registered in the shared metadata before use.
+import app.auth.models  # noqa: F401
 from app.models import Base
 
 

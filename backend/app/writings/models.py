@@ -15,6 +15,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
+# FK targets must be registered in the shared metadata before use.
+import app.library.models  # noqa: F401
 from app.models import Base
 
 

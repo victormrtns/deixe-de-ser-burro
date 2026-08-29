@@ -8,6 +8,11 @@ from alembic import context
 from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+import app.auth.models
+import app.idempotency.models
+import app.library.models
+import app.publishing.models
+import app.writings.models  # noqa: F401
 from app.models import Base
 
 config = context.config
