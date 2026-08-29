@@ -11,6 +11,7 @@ from app.db import get_session
 from app.errors import AppError, app_error_handler, request_validation_error_handler
 from app.files.router import router as public_files_router
 from app.library.router import router as library_router
+from app.observability import RequestObservabilityMiddleware, configure_logging
 from app.public_read.router import router as public_read_router
 from app.publishing.router import router as publishing_router
 from app.writings.router import router as writings_router
@@ -36,7 +37,9 @@ async def readiness(session: AsyncSession) -> dict[str, str]:
 
 
 def create_app() -> FastAPI:
+    configure_logging()
     app = FastAPI(title="Entrelinhas API")
+    app.add_middleware(RequestObservabilityMiddleware)
     app.add_exception_handler(AppError, app_error_handler)
     app.add_exception_handler(RequestValidationError, request_validation_error_handler)
     app.include_router(auth_router)

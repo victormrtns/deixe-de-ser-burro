@@ -35,6 +35,7 @@ def _error_response(
     if not isinstance(request_id, str) or not request_id:
         request_id = str(uuid4())
 
+    request.state.error_code = code
     body: dict[str, Any] = {"code": code, "message": message, "requestId": request_id}
     if details is not None:
         body["details"] = details
