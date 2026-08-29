@@ -1,0 +1,9 @@
+[Unit]
+Description=Entrelinhas: processa limpezas de publicação vencidas
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/entrelinhas
+ExecStart=/usr/bin/docker compose run --rm cleanup
