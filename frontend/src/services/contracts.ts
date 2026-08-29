@@ -46,6 +46,44 @@ export interface PublicLanding {
   publishedBooks: PublicBookSummary[]
 }
 
+export interface ApiErrorShape {
+  code: string
+  message: string
+  details?: Record<string, unknown>
+  requestId: string
+}
+
+export type AuthSession = { state: 'anonymous' } | { state: 'author'; author: { email: string } }
+
+export interface AuthApi {
+  getSession(): Promise<AuthSession>
+  signIn(email: string, password: string): Promise<AuthSession>
+  signOut(): Promise<void>
+}
+
+export interface WritingVersion {
+  version: number
+  title: string
+  sourceRange: string
+  markdown: string
+  reason: 'created' | 'manual_save' | 'restored' | 'published'
+  createdAt: string
+}
+
+export interface WritingVersionPage { items: WritingVersion[]; nextCursor: string | null }
+
+export interface PublicationStatus {
+  slug: string
+  state: 'published' | 'withdrawn'
+  publishedAt: string
+  cleanupAt: string
+  cleanupCancelledAt: string | null
+  cleanupCompletedAt: string | null
+}
+
+export interface PublicArticleDetail extends PublicArticleSummary { markdown: string }
+export interface PublicBookDetail extends PublicBookSummary { articles: PublicArticleSummary[] }
+
 export interface BooksApi { list(): Promise<Book[]>; create(input: Pick<Book, 'title' | 'author'>): Promise<Book> }
 export interface WritingsApi {
   getWorkspace(id: string): Promise<WorkspacePayload>
@@ -54,7 +92,12 @@ export interface WritingsApi {
 export interface ChatApi { list(writingId: string): Promise<Message[]> }
 export interface AudioApi { list(writingId: string): Promise<AudioClip[]> }
 export interface SuggestionsApi { list(writingId: string): Promise<Suggestion[]> }
-export interface PublishingApi { publish(writingId: string): Promise<{ slug: string; cleanupAt: string }> }
+export interface PublishingApi {
+  publish(writingId: string, idempotencyKey?: string): Promise<{ slug: string; publishedAt: string; cleanupAt: string }>
+  getStatus(writingId: string): Promise<PublicationStatus>
+  cancelCleanup(writingId: string): Promise<PublicationStatus>
+  unpublish(writingId: string): Promise<PublicationStatus>
+}
 export interface UsageApi { getSummary(): Promise<UsageSummary> }
 export interface PublicApi {
   getLanding(): Promise<PublicLanding>
@@ -62,4 +105,36 @@ export interface PublicApi {
   listBooks(): Promise<PublicBookSummary[]>
 }
 
-export interface AppApi { books: BooksApi; writings: WritingsApi; chat: ChatApi; audio: AudioApi; suggestions: SuggestionsApi; publishing: PublishingApi; usage: UsageApi; public: PublicApi }
+export interface AppApi { auth: AuthApi; books: BooksApi; writings: WritingsApi; chat: ChatApi; audio: AudioApi; suggestions: SuggestionsApi; publishing: PublishingApi; usage: UsageApi; public: PublicApi }
+
+export interface BooksAdminApi extends BooksApi {
+  create(input: Pick<Book, 'title' | 'author'>, idempotencyKey?: string): Promise<Book>
+  get(id: string): Promise<Book>
+  update(id: string, input: Partial<Pick<Book, 'title' | 'author'>>): Promise<Book>
+  remove(id: string): Promise<void>
+}
+
+export interface WritingsAdminApi extends WritingsApi {
+  create(
+    bookId: string,
+    input: { title: string; sourceRange: string; markdown?: string },
+    idempotencyKey?: string,
+  ): Promise<Writing>
+  listByBook(bookId: string): Promise<Writing[]>
+  get(id: string): Promise<Writing>
+  updateMetadata(input: { id: string; expectedVersion: number; title?: string; sourceRange?: string }): Promise<Writing>
+  remove(id: string): Promise<void>
+  listVersions(id: string, cursor?: string): Promise<WritingVersionPage>
+  restoreVersion(input: { id: string; versionNumber: number; expectedVersion: number }): Promise<Writing>
+}
+
+export interface PublicAdminApi extends PublicApi {
+  getArticle(slug: string): Promise<PublicArticleDetail>
+  getBook(slug: string): Promise<PublicBookDetail>
+}
+
+export interface HttpAppApi extends AppApi {
+  books: BooksAdminApi
+  writings: WritingsAdminApi
+  public: PublicAdminApi
+}

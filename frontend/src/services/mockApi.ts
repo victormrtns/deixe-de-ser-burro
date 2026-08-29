@@ -1,4 +1,4 @@
-import type { AppApi, AudioClip, Book, LimitState, Message, Suggestion, UsageSummary, Writing } from '@/services/contracts'
+import type { AppApi, AudioClip, Book, LimitState, Message, PublicationStatus, Suggestion, UsageSummary, Writing } from '@/services/contracts'
 import { publicArticleFixtures, publicBookFixtures, publicLandingFixture } from '@/services/mock/fixtures'
 
 const writing: Writing = { id: 'writing-deep-work-01', bookId: 'book-deep-work', title: 'Ritual antes do foco', markdown: '# Ritual antes do foco', sourceRange: 'Capítulos 3–4', status: 'draft', version: 4, updatedAt: '2026-08-28T10:21:00-03:00' }
@@ -13,10 +13,24 @@ const usageValues: Record<LimitState, UsageSummary> = {
   blocked: { period: '2026-08', audioMinutes: 240, estimatedAiCostBrl: 70, monthlyLimitBrl: 70, limitState: 'blocked' },
 }
 
+const publicationStatus: PublicationStatus = {
+  slug: 'ritual-antes-do-foco',
+  state: 'published',
+  publishedAt: '2026-08-28T10:21:00-03:00',
+  cleanupAt: '2026-08-31T10:21:00-03:00',
+  cleanupCancelledAt: null,
+  cleanupCompletedAt: null,
+}
+
 export function createMockApi(options: { usage?: LimitState } = {}): AppApi {
   let currentWriting = { ...writing }
   const currentBooks = books.map((book) => ({ ...book }))
   return {
+    auth: {
+      async getSession() { return { state: 'author', author: { email: 'autor@example.com' } } },
+      async signIn() { return { state: 'author', author: { email: 'autor@example.com' } } },
+      async signOut() { return undefined },
+    },
     books: {
       async list() { return currentBooks.map((book) => ({ ...book })) },
       async create(input) { const book = { id: `book-${currentBooks.length + 1}`, ...input, writingCount: 0 }; currentBooks.push(book); return { ...book } },
@@ -28,7 +42,12 @@ export function createMockApi(options: { usage?: LimitState } = {}): AppApi {
     chat: { async list(writingId) { return messages.filter((item) => item.writingId === writingId).map((item) => ({ ...item })) } },
     audio: { async list(writingId) { return audio.filter((item) => item.writingId === writingId).map((item) => ({ ...item })) } },
     suggestions: { async list(writingId) { return suggestions.filter((item) => item.writingId === writingId).map((item) => ({ ...item })) } },
-    publishing: { async publish() { return { slug: 'ritual-antes-do-foco', cleanupAt: '2026-08-31T10:21:00-03:00' } } },
+    publishing: {
+      async publish() { return { slug: publicationStatus.slug, publishedAt: publicationStatus.publishedAt, cleanupAt: publicationStatus.cleanupAt } },
+      async getStatus() { return { ...publicationStatus } },
+      async cancelCleanup() { return { ...publicationStatus, cleanupCancelledAt: '2026-08-28T11:00:00-03:00' } },
+      async unpublish() { return { ...publicationStatus, state: 'withdrawn' as const } },
+    },
     usage: { async getSummary() { return { ...usageValues[options.usage ?? 'normal'] } } },
     public: {
       async getLanding() { return structuredClone(publicLandingFixture) },
