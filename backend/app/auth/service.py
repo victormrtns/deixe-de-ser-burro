@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import secrets
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from hashlib import sha256
 from typing import Annotated
 from urllib.parse import urlsplit
@@ -23,6 +23,7 @@ from app.auth.persistence import (
     touch_session_if_stale,
 )
 from app.auth.schemas import CurrentAuthor
+from app.clock import utc_now
 from app.config import Settings, get_settings
 from app.db import get_session
 from app.errors import AppError
@@ -35,10 +36,6 @@ _PASSWORD_HASH = PasswordHash.recommended()
 class IssuedSession:
     token: str = field(repr=False)
     expires_at: datetime
-
-
-def utc_now() -> datetime:
-    return datetime.now(UTC)
 
 
 def hash_session_token(token: str) -> str:

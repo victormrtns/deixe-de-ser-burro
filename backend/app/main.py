@@ -1,13 +1,15 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.exceptions import RequestValidationError
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.router import router as auth_router
 from app.db import get_session
-from app.errors import AppError, app_error_handler
+from app.errors import AppError, app_error_handler, request_validation_error_handler
+from app.library.router import router as library_router
 
 EXPECTED_ALEMBIC_HEAD = "0001_initial"
 SessionDependency = Annotated[AsyncSession, Depends(get_session)]
@@ -32,7 +34,9 @@ async def readiness(session: AsyncSession) -> dict[str, str]:
 def create_app() -> FastAPI:
     app = FastAPI(title="Entrelinhas API")
     app.add_exception_handler(AppError, app_error_handler)
+    app.add_exception_handler(RequestValidationError, request_validation_error_handler)
     app.include_router(auth_router)
+    app.include_router(library_router)
 
     @app.get("/api/health/live")
     async def live() -> dict[str, str]:

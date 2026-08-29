@@ -12,13 +12,19 @@ import pytest_asyncio
 from alembic import command
 from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
+from app.auth.models import AuthorAccount
+from app.auth.service import bootstrap_author
 from app.config import ASYNC_POSTGRES_DRIVER
 
 _SCHEMA_PATTERN = re.compile(r"^entrelinhas_test_[a-z0-9_]+_[0-9a-f]{32}$")
+
+AUTHOR_EMAIL = "author@example.com"
+AUTHOR_PASSWORD = "correct horse"
+ALLOWED_ORIGIN = "http://localhost:5173"
 
 
 def _required_test_database_url() -> URL:
@@ -110,3 +116,21 @@ async def client(migrated_database_url: str) -> AsyncIterator[AsyncClient]:
     finally:
         app.dependency_overrides.clear()
         await database.dispose()
+
+
+@pytest_asyncio.fixture
+async def author(session: AsyncSession) -> AuthorAccount:
+    await bootstrap_author(session, AUTHOR_EMAIL, AUTHOR_PASSWORD)
+    created = await session.scalar(select(AuthorAccount))
+    assert created is not None
+    return created
+
+
+@pytest_asyncio.fixture
+async def authenticated_client(client: AsyncClient, author: AuthorAccount) -> AsyncClient:
+    response = await client.post(
+        "/api/auth/session",
+        json={"email": AUTHOR_EMAIL, "password": AUTHOR_PASSWORD},
+    )
+    assert response.status_code == 200
+    return client

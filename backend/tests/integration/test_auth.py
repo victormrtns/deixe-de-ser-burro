@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Annotated
 
 import pytest
-import pytest_asyncio
 from fastapi import Depends
 from httpx import ASGITransport, AsyncClient
 from pwdlib import PasswordHash
@@ -30,26 +29,19 @@ from app.auth.service import (
 from app.config import Settings, get_settings
 from app.db import Database, get_session
 from app.errors import AppError
-
-PASSWORD = "correct horse"
-
-
-@pytest_asyncio.fixture
-async def author(session: AsyncSession) -> AuthorAccount:
-    await bootstrap_author(session, "  AUTHOR@Example.COM ", PASSWORD)
-    author = await session.scalar(select(AuthorAccount))
-    assert author is not None
-    return author
+from tests.conftest import AUTHOR_PASSWORD as PASSWORD
 
 
-@pytest_asyncio.fixture
-async def authenticated_client(client: AsyncClient, author: AuthorAccount) -> AsyncClient:
+async def test_login_accepts_a_differently_cased_email(
+    client: AsyncClient, author: AuthorAccount
+) -> None:
     response = await client.post(
         "/api/auth/session",
-        json={"email": "AUTHOR@example.com", "password": PASSWORD},
+        json={"email": "AUTHOR@Example.COM", "password": PASSWORD},
     )
+
     assert response.status_code == 200
-    return client
+    assert response.json() == {"state": "author", "author": {"email": author.email}}
 
 
 async def test_bootstrap_normalizes_email_and_hashes_password(
