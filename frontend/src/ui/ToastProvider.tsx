@@ -1,4 +1,4 @@
-import { createContext, use, useCallback, useMemo, useState, type ReactNode } from 'react'
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import './ui.css'
 
 type ToastTone = 'success' | 'warning' | 'info' | 'error'
@@ -6,13 +6,18 @@ type Toast = { id: number; message: string; tone: ToastTone }
 type ToastActions = { notify(message: string, tone?: ToastTone): void }
 
 const ToastContext = createContext<ToastActions | null>(null)
-let nextToastId = 0
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const nextId = useRef(0)
   const notify = useCallback((message: string, tone: ToastTone = 'info') => {
-    setToasts((current) => [...current.filter((item) => item.message !== message), { id: (nextToastId += 1), message, tone }].slice(-3))
+    const id = (nextId.current += 1)
+    setToasts((current) => [...current.filter((item) => item.message !== message), { id, message, tone }].slice(-3))
+    // Aviso efêmero: o desfecho já está na tela; o toast não pode virar painel permanente sobre o conteúdo.
+    timers.current.push(setTimeout(() => setToasts((current) => current.filter((item) => item.id !== id)), 8000))
   }, [])
+  useEffect(() => { const pending = timers.current; return () => { pending.forEach(clearTimeout) } }, [])
   const actions = useMemo(() => ({ notify }), [notify])
 
   return (
