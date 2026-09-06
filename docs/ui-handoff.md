@@ -15,7 +15,6 @@ em `UX-CONTRACT.md`.
 | `design.md` | Cor, tipografia, linguagem visual, escala | Não é inventário de componentes. É referência externa; os cartões de feature, linhas de Send/Swap/Receive e marcas cripto que ele cita são calibragem de estilo, não coisas a construir |
 | `UX-CONTRACT.md` | Rotas, títulos, donos canônicos de UI, ledger de comportamento, acessibilidade | Não define valores visuais |
 | `brand/README.md` | Logo, wordmark, favicon e faixas de tamanho | — |
-| `DESIGN.md` | Nada. Superado, mantido como registro histórico | — |
 
 ## O sistema de ação, depois da sabatina
 
@@ -132,10 +131,16 @@ fora desta fase, e o painel do assistente diz isso ao usuário. **Manter como es
 decisão do autor.** Quando voltar, o CSS precisa de revisão: usa pílula com borda
 própria, fora das quatro formas.
 
-### 5. `MarginRail.tsx` é código morto
+### 5. Código morto — removido
 
-O "trilho de marginalia" do `DESIGN.md` superado. Não é renderizado e não tem uma linha
-de CSS. Decidir se volta como conceito ou se sai.
+`MarginRail.tsx` (o trilho de marginalia do `DESIGN.md` superado), `MarkdownEditor.tsx`
+(editor CodeMirror que nada renderizava — o editor real é um `textarea`), `useAutosave.ts`
+(debounce reimplementado em `WorkspaceProvider`) e `conversationEvents.ts` (só o próprio
+teste importava) foram apagados em 2026-09-06, junto com as duas dependências de
+CodeMirror que ninguém usava. O `DESIGN.md` superado também saiu: dois arquivos chamados
+`design.md` e `DESIGN.md` no mesmo diretório colidem em macOS e Windows.
+
+O áudio fica, por decisão do autor, mesmo dormente.
 
 ### 6. Corpo de texto — decidido: 15px
 

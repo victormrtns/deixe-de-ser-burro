@@ -15,14 +15,12 @@
     "verify:bundles": "node scripts/check-bundles.mjs"
   },
   "dependencies": {
-    "@codemirror/lang-markdown": "^6.5.2",
     "@fontsource-variable/bricolage-grotesque": "^5.2.8",
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource/ibm-plex-mono": "^5.2.6",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
-    "@uiw/react-codemirror": "^4.25.11",
     "katex": "^0.18.4",
     "lucide-react": "^0.468.0",
     "mermaid": "^11.17.2",

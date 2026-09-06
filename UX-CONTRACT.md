@@ -6,7 +6,7 @@
 |---|---|---|
 | Produto, privacidade e ciclo de publicação | `docs/superpowers/specs/2026-08-28-ai-books-learning-blog-design.md` | Área privada autenticada; artigo público nunca expõe artefatos de trabalho; limpeza tem recuperação por três dias. |
 | Identidade e implementação | `docs/superpowers/plans/2026-08-28-visual-identity-frontend.md` | UI em pt-BR, WCAG 2.2 AA e contratos compartilhados. |
-| Referência visual | `design.md` (canônico) | Canônico para cor, tipografia e linguagem visual. É referência extraída de fora: os componentes e marcas que ele cita são calibragem de estilo, não o inventário do produto. `DESIGN.md` está superado e não vale como fonte. |
+| Referência visual | `design.md` | Fonte única de cor, tipografia e linguagem visual. É referência extraída de fora: os componentes e marcas que ele cita são calibragem de estilo, não o inventário do produto. |
 | Marca e ativos | `brand/` e `brand/README.md` | Nome público `deixedeserburro`; logo, wordmark e favicon vêm dos arquivos versionados, com as faixas de tamanho do README. |
 
 ## Rotas e títulos
@@ -36,6 +36,7 @@ As páginas de 403, 404 e de falha são próprias, preservam a navegação poss�
 |---|---|---|---|---|
 | Ação | `ui/Button` | Este contrato | `primary` / `neutral` / `ghost` / `danger` | unidade + teclado |
 | Ação inline | classe `.text-action` em `ui/ui.css` | Este contrato | única | contraste + teclado |
+| Ação de ícone | `.workspace-header-actions > button` em `features/workspace/workspace-sovereign.css` | Este contrato | alternar painel / focar documento | rótulo acessível + alvo mínimo |
 | Form | `Field` e formulários `noValidate` | Este contrato | criar / editar / entrar | unidade + teclado |
 | Scrollbar | `styles/globals.css` | Este contrato | apenas geometria documentada | estilo computado |
 | Toast | `ToastProvider` | Este contrato | sucesso / aviso / informação / erro | live region |
@@ -43,9 +44,15 @@ As páginas de 403, 404 e de falha são próprias, preservam a navegação poss�
 | Página de falha | `ui/RouteErrorPage` e a classe `.route-error` | Este contrato | 403 / 404 / falha de carregamento | título + navegação possível |
 | CRUD | rotas e serviços de biblioteca | Especificação do produto | retornar à lista / permanecer | E2E completo |
 
-Toda ação clicável é uma das três formas acima. Nenhum `<button>` do produto declara
-o próprio preenchimento, raio ou peso: quem precisa de um botão importa a primitiva.
+Toda ação clicável é uma das formas acima. Nenhum `<button>` do produto declara o
+próprio preenchimento, raio ou peso: quem precisa de um botão importa a primitiva.
 Um botão sem classe é defeito, não variante.
+
+A ação de ícone é a barra de ferramentas do estúdio — quadrado de 32px, sem rótulo
+visível, `aria-label` obrigatório e `aria-pressed` quando alterna estado. Fica em
+`workspace-sovereign.css` porque só o workspace tem barra de ferramentas; no dia em que
+uma segunda região precisar dela, vira `.icon-button` em `ui/ui.css` e este contrato
+muda de dono junto. Ícone sozinho nunca carrega ação destrutiva nem ação primária.
 
 `primary` é a única ação escura por região e nunca aparece duas vezes na mesma decisão.
 `danger` existe para exclusão e nunca carrega texto claro sobre o vermelho. É a forma de

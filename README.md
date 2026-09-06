@@ -257,7 +257,6 @@ Rode a verificação completa antes de enviar. Todos os comandos da seção
 | [`ops/dev-stack.md`](ops/dev-stack.md) | Stack local, E2E e validação do assistente |
 | [`docs/handoffs/current.md`](docs/handoffs/current.md) | Estado e continuidade do projeto |
 
-`DESIGN.md`, em maiúsculas, está superado e mantido apenas como registro histórico.
 
 ## Marca
 

@@ -12,7 +12,7 @@ Branch: `feat/brand-visual-audit` · worktree `wt-brand` · duas rodadas (2026-0
 |---|---|---|
 | **Cor, tipografia e linguagem visual** | **`design.md`** | Decisão do autor (2026-09-05). É a paleta canônica do produto e é ela que está em `tokens.css`. |
 | **Ativos** | **`brand/`** | Arquivos vetoriais finais. `brand/README.md` manda no dimensionamento e no uso. |
-| **`DESIGN.md`** | **Superado** | Não deletado. Recebeu um aviso no topo para ninguém implementar a partir dele. |
+| **`DESIGN.md`** | **Superado** | Recebeu um aviso no topo. Apagado depois, em 2026-09-06: dois arquivos com o mesmo nome diferindo só na caixa colidem em macOS e Windows. |
 
 **Nome do produto: `deixedeserburro`.** "Entrelinhas" está morto. Com isso, o conflito de duas marcas na mesma linha — que na rodada 1 impedia o uso do wordmark — deixou de existir.
 
