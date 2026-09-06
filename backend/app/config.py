@@ -38,8 +38,19 @@ class Settings(BaseSettings):
     ai_gateway: Literal["disabled", "fake", "openai"] = "disabled"
     openai_api_key: SecretStr | None = None
     ai_model: str = "gpt-5-mini"
-    ai_max_output_tokens: PositiveInt = 800
+    # `gpt-5-mini` is a reasoning model, and its reasoning tokens are billed and
+    # counted inside `max_output_tokens`. Rodada 001 measured this: with a
+    # ceiling of 800 all five cases hit the ceiling and two answers came back
+    # with zero visible characters. With `reasoning=low` and a ceiling of 3000,
+    # the measured worst case (2447 output tokens at the provider's default
+    # effort) fits with room to spare. See `ia/evals/parte-1-rodada-001.md`.
+    ai_reasoning_effort: Literal["minimal", "low", "medium", "high"] = "low"
+    ai_max_output_tokens: PositiveInt = 3_000
     ai_max_context_chars: PositiveInt = 120_000
+    # The Markdown alone gets half the context budget, so the other half stays
+    # available for the memory and the six-pair history: a long conversation
+    # over a big document must fail on the total, not squeeze history to zero.
+    ai_max_markdown_chars: PositiveInt = 60_000
     ai_development_budget_usd: Decimal = Decimal("2.00")
     ai_manual_smoke_budget_usd: Decimal = Decimal("0.25")
 
@@ -76,6 +87,8 @@ class Settings(BaseSettings):
             raise ValueError("manual smoke budget must not exceed the development budget")
         if self.ai_gateway == "openai" and self.openai_api_key is None:
             raise ValueError("ai_gateway=openai requires OPENAI_API_KEY")
+        if self.ai_max_markdown_chars > self.ai_max_context_chars:
+            raise ValueError("markdown limit must not exceed the total context limit")
         return self
 
     @model_validator(mode="after")

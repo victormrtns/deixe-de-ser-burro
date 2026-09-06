@@ -22,8 +22,10 @@ MUTATION_HEADERS = {"Origin": ALLOWED_ORIGIN}
 class RecordingGateway(FakeModelGateway):
     """Counts calls so a test can prove the gateway was never reached."""
 
-    def __init__(self, chunks: list[str], *, fail_with: str | None = None) -> None:
-        super().__init__(chunks, fail_with=fail_with)
+    def __init__(
+        self, chunks: list[str], *, fail_with: str | None = None, truncated: bool = False
+    ) -> None:
+        super().__init__(chunks, fail_with=fail_with, truncated=truncated)
         self.calls = 0
 
     async def stream(self, request: ModelRequest) -> AsyncIterator[ModelEvent]:
@@ -482,3 +484,90 @@ async def test_gateway_error_message_never_leaks_content() -> None:
 
     assert "sk-" not in str(error)
     assert error.code == "provider_rate_limited"
+
+
+# --- truncated answers ------------------------------------------------------
+
+
+@pytest.fixture
+def truncating_gateway(api_app: Any) -> RecordingGateway:
+    """A provider that cut the answer short: usage is final, the text is not."""
+    gateway = RecordingGateway(["Começo da resposta"], truncated=True)
+    return cast(RecordingGateway, _install(api_app, gateway))
+
+
+async def test_a_truncated_answer_is_not_stored_as_completed(
+    authenticated_client: AsyncClient, session: AsyncSession, truncating_gateway: RecordingGateway
+) -> None:
+    writing_id = await create_writing(authenticated_client)
+
+    response = await send(authenticated_client, writing_id, "Desenvolve esta passagem.")
+
+    names = [name for name, _ in frames(response.text)]
+    assert names[-1] == "response.interrupted"
+
+    history = await authenticated_client.get(f"/api/writings/{writing_id}/conversation")
+    assistant = history.json()["messages"][-1]
+    assert assistant["state"] == "interrupted"
+    # Whatever arrived stays visible; it is simply not a finished answer.
+    assert assistant["content"] == "Começo da resposta"
+
+    attempt = (await session.execute(select(GenerationAttempt))).scalars().one()
+    assert attempt.state == "interrupted"
+    assert attempt.safe_error_code == "response_truncated:max_output_tokens"
+
+
+async def test_a_truncated_answer_still_settles_the_tokens_it_spent(
+    authenticated_client: AsyncClient, session: AsyncSession, truncating_gateway: RecordingGateway
+) -> None:
+    writing_id = await create_writing(authenticated_client)
+
+    response = await send(authenticated_client, writing_id, "Desenvolve esta passagem.")
+
+    _, payload = frames(response.text)[-1]
+    assert payload["usage"]["outputTokens"] > 0
+    entry = (await session.execute(select(AiUsageEntry))).scalars().one()
+    # The provider billed the tokens, so the reservation settles instead of
+    # being released: a cut answer is not a free answer.
+    assert entry.state == "settled"
+    assert entry.actual_usd_micros == payload["usage"]["estimatedCostUsdMicros"]
+
+
+async def test_a_truncated_answer_can_never_become_memory(
+    authenticated_client: AsyncClient, truncating_gateway: RecordingGateway
+) -> None:
+    writing_id = await create_writing(authenticated_client)
+    await send(authenticated_client, writing_id, "Desenvolve esta passagem.")
+
+    history = await authenticated_client.get(f"/api/writings/{writing_id}/conversation")
+    assistant_id = history.json()["messages"][-1]["id"]
+
+    stored = await authenticated_client.post(
+        f"/api/writings/{writing_id}/memory",
+        headers=MUTATION_HEADERS,
+        json={
+            "kind": "preference",
+            "content": "manter o tom seco",
+            "sourceMessageId": assistant_id,
+        },
+    )
+
+    assert stored.status_code == 422
+    assert stored.json()["error"]["code"] == "invalid_memory_source"
+
+
+async def test_a_markdown_over_its_own_limit_is_refused_before_the_gateway(
+    authenticated_client: AsyncClient,
+    settings_overrides: dict[str, object],
+    never_called_gateway: NeverCalledGateway,
+) -> None:
+    """The Markdown guard must be reachable: it is a separate, smaller limit."""
+    settings_overrides["ai_max_markdown_chars"] = 500
+    settings_overrides["ai_max_context_chars"] = 120_000
+    writing_id = await create_writing(authenticated_client, markdown="x" * 501)
+
+    response = await send(authenticated_client, writing_id, "O que falta aqui?")
+
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "context_too_large"
+    assert never_called_gateway.calls == 0

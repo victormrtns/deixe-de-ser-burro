@@ -17,9 +17,16 @@ def estimate_tokens(text: str) -> int:
 class FakeModelGateway:
     """Deterministic gateway used by every automated test: zero network, zero cost."""
 
-    def __init__(self, chunks: Sequence[str], *, fail_with: str | None = None) -> None:
+    def __init__(
+        self,
+        chunks: Sequence[str],
+        *,
+        fail_with: str | None = None,
+        truncated: bool = False,
+    ) -> None:
         self._chunks = list(chunks)
         self._fail_with = fail_with
+        self._truncated = truncated
         self.requests: list[ModelRequest] = []
 
     async def stream(self, request: ModelRequest) -> AsyncIterator[ModelEvent]:
@@ -39,4 +46,6 @@ class FakeModelGateway:
                 output_tokens=output_tokens,
                 total_tokens=input_tokens + output_tokens,
             ),
+            truncated=self._truncated,
+            truncation_reason="max_output_tokens" if self._truncated else None,
         )

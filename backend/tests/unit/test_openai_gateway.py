@@ -19,10 +19,12 @@ from openai.types.responses import (
     Response,
     ResponseCompletedEvent,
     ResponseCreatedEvent,
+    ResponseIncompleteEvent,
     ResponseStreamEvent,
     ResponseTextDeltaEvent,
     ResponseUsage,
 )
+from openai.types.responses.response import IncompleteDetails
 
 from app.assistant.dependencies import get_model_gateway
 from app.assistant.fake_gateway import FakeModelGateway
@@ -40,8 +42,11 @@ REQUEST = ModelRequest(
 USAGE = ResponseUsage.model_construct(input_tokens=120, output_tokens=45, total_tokens=165)
 
 
-def _response(usage: ResponseUsage | None) -> Response:
-    return Response.model_construct(id="resp_123", usage=usage)
+def _response(usage: ResponseUsage | None, incomplete_reason: str | None = None) -> Response:
+    details = (
+        IncompleteDetails.model_construct(reason=incomplete_reason) if incomplete_reason else None
+    )
+    return Response.model_construct(id="resp_123", usage=usage, incomplete_details=details)
 
 
 def _created() -> ResponseStreamEvent:
@@ -141,6 +146,7 @@ async def test_request_carries_the_expected_parameters() -> None:
         "instructions": INSTRUCTIONS,
         "input": MARKDOWN,
         "max_output_tokens": 800,
+        "reasoning": {"effort": "low"},
         "stream": True,
         "store": False,
     }
@@ -339,3 +345,40 @@ async def test_a_completed_stream_is_closed_too() -> None:
 
     assert responses.stream is not None
     assert responses.stream.closed is True
+
+
+def _incomplete(reason: str | None = "max_output_tokens") -> ResponseStreamEvent:
+    return ResponseIncompleteEvent.model_construct(
+        type="response.incomplete", response=_response(USAGE, reason), sequence_number=2
+    )
+
+
+async def test_a_cut_answer_is_marked_truncated_with_the_provider_reason() -> None:
+    gateway, _ = _gateway([_created(), _delta("metade"), _incomplete()])
+
+    events = await _drain(gateway)
+
+    assert [event.type for event in events] == ["started", "text_delta", "completed"]
+    terminal = events[-1]
+    assert terminal.truncated is True
+    assert terminal.truncation_reason == "max_output_tokens"
+    # The usage is final even when the text is not: those tokens were billed.
+    assert terminal.usage == ModelUsage(input_tokens=120, output_tokens=45, total_tokens=165)
+
+
+async def test_a_whole_answer_is_not_marked_truncated() -> None:
+    gateway, _ = _gateway([_created(), _delta("inteira"), _completed()])
+
+    terminal = (await _drain(gateway))[-1]
+
+    assert terminal.truncated is False
+    assert terminal.truncation_reason is None
+
+
+async def test_a_missing_incomplete_reason_still_yields_a_safe_token() -> None:
+    gateway, _ = _gateway([_created(), _delta("metade"), _incomplete(reason=None)])
+
+    terminal = (await _drain(gateway))[-1]
+
+    assert terminal.truncated is True
+    assert terminal.truncation_reason == "unknown"

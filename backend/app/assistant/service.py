@@ -159,7 +159,7 @@ async def prepare_generation(
             instruction_version=instruction_version,
         ),
         ContextLimits(
-            max_markdown_chars=settings.ai_max_context_chars,
+            max_markdown_chars=settings.ai_max_markdown_chars,
             max_total_chars=settings.ai_max_context_chars,
         ),
     )
@@ -214,6 +214,8 @@ async def run_generation(
     started = time.perf_counter()
     usage: ModelUsage | None = None
     response_id: str | None = None
+    truncated = False
+    truncation_reason: str | None = None
     try:
         async for event in gateway.stream(prepared.request):
             if event.type == "started":
@@ -223,6 +225,8 @@ async def run_generation(
                 yield sequence.frame("response.delta", prepared, delta=event.delta)
             elif event.type == "completed":
                 usage = event.usage
+                truncated = event.truncated
+                truncation_reason = event.truncation_reason
         if usage is None:
             raise GatewayError("provider_protocol_error")
     except GatewayError as failure:
@@ -240,20 +244,25 @@ async def run_generation(
 
     await buffer.flush()
     cost = budget.actual_cost_micros(prepared.model, usage)
+    # A truncated answer is not a finished one: it is stored as `interrupted`,
+    # so it stays visible, never re-enters the next context, and can never be
+    # the source of a memory item. The tokens were spent, so the cost settles.
+    state: MessageState = "interrupted" if truncated else "completed"
     await _finish(
         session,
         prepared,
-        "completed",
+        state,
         latency_ms=_elapsed_ms(started),
         usage=usage,
         cost_micros=cost,
         response_id=response_id,
+        error_code=f"response_truncated:{truncation_reason}" if truncated else None,
     )
     await budget.settle(session, prepared.attempt_id, actual_micros=cost)
     await session.commit()
     settled, reserved = await budget.totals(session)
     yield sequence.frame(
-        "response.completed",
+        "response.interrupted" if truncated else "response.completed",
         prepared,
         usage={
             "inputTokens": usage.input_tokens,
@@ -508,6 +517,7 @@ async def _to_prepared(
             input=composed.input,
             model=settings.ai_model,
             max_output_tokens=settings.ai_max_output_tokens,
+            reasoning_effort=settings.ai_reasoning_effort,
         ),
         budget_limit=budget.limit_micros(settings),
         replayed=attempt is not None and attempt.state != "pending",

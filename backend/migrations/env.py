@@ -8,6 +8,7 @@ from alembic import context
 from sqlalchemy import Connection, pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
+import app.assistant.models
 import app.auth.models
 import app.idempotency.models
 import app.library.models
