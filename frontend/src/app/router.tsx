@@ -24,7 +24,7 @@ function appRoutes(): RouteObject[] { return [
   { path: '/entrar', element: <SignInPage /> },
   { path: '/studio', element: <RequireAuthor><LibraryPage /></RequireAuthor> },
   { path: '/studio/livros/:bookId', element: <RequireAuthor><BookDetailPage /></RequireAuthor> },
-  { path: '/studio/escritas/:id', element: <RequireAuthor><Suspense fallback={<main aria-label="deixedeserburro">Abrindo escrita…</main>}><WorkspacePage /></Suspense></RequireAuthor> },
+  { path: '/studio/escritas/:id', element: <RequireAuthor><Suspense fallback={<main className="session-placeholder" aria-label="Carregando escrita"><p role="status">Abrindo escrita…</p></main>}><WorkspacePage /></Suspense></RequireAuthor> },
   { path: '/sem-permissao', element: <ForbiddenPage /> },
   { path: '*', element: <NotFoundPage /> },
 ] }

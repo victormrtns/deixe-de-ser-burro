@@ -13,7 +13,7 @@ type SharedProps = {
 }
 
 function Frame({ open, onOpenChange, title, description, children }: SharedProps & { title: string; description: string; children: React.ReactNode }) {
-  return <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}><DialogPrimitive.Portal><DialogPrimitive.Overlay className="dialog__overlay" /><DialogPrimitive.Content className="dialog library-dialog"><button className="dialog-close" type="button" onClick={() => onOpenChange(false)} aria-label="Fechar"><X size={18} /></button><span className="eyebrow">Novo começo</span><DialogPrimitive.Title className="dialog__title">{title}</DialogPrimitive.Title><DialogPrimitive.Description className="dialog__description">{description}</DialogPrimitive.Description>{children}</DialogPrimitive.Content></DialogPrimitive.Portal></DialogPrimitive.Root>
+  return <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}><DialogPrimitive.Portal><DialogPrimitive.Overlay className="dialog__overlay" /><DialogPrimitive.Content className="dialog library-dialog"><GhostButton className="dialog-close" type="button" onClick={() => onOpenChange(false)} aria-label="Fechar"><X size={18} aria-hidden="true" /></GhostButton><span className="eyebrow">Novo começo</span><DialogPrimitive.Title className="dialog__title">{title}</DialogPrimitive.Title><DialogPrimitive.Description className="dialog__description">{description}</DialogPrimitive.Description>{children}</DialogPrimitive.Content></DialogPrimitive.Portal></DialogPrimitive.Root>
 }
 
 function useIntentKey(open: boolean) {

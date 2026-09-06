@@ -71,6 +71,20 @@ textarea:focus-visible,
   box-shadow: var(--focus-ring);
 }
 
+h1,
+h2,
+h3,
+h4,
+p,
+li {
+  overflow-wrap: break-word;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
 ::selection {
   background: var(--color-annotation-wash);
   color: var(--color-ink);
