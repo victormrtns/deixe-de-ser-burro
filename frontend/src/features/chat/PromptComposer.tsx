@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { RotateCcw, Send, Square } from 'lucide-react'
 import { useChat } from './ChatProvider'
+import { NeutralButton, PrimaryButton } from '@/ui/Button'
 
 export function PromptComposer() {
   const [draft, setDraft] = useState('')
@@ -13,6 +14,6 @@ export function PromptComposer() {
   return <form className="chat-composer" noValidate onSubmit={(event) => void submit(event)}>
     <label htmlFor="chat-message">Mensagem</label>
     <textarea id="chat-message" className="resize-none" rows={3} style={{ resize: 'none' }} value={draft} disabled={status === 'streaming'} onChange={(event) => setDraft(event.target.value)} onKeyDown={onKeyDown} onCompositionStart={() => { composing.current = true }} onCompositionEnd={() => { composing.current = false }} placeholder="Peça uma estrutura, contraponto ou conexão…" />
-    {status === 'streaming' ? <button type="button" className="chat-stop" onClick={stop}><Square size={14} /> Parar geração</button> : <button type="submit" disabled={!draft.trim()}>{status === 'failed' && draft.trim() ? <><RotateCcw size={15} /> Reenviar mensagem</> : <><Send size={15} /> Enviar</>}</button>}
+    {status === 'streaming' ? <NeutralButton type="button" className="chat-stop" icon={<Square size={14} />} onClick={stop}>Parar geração</NeutralButton> : <PrimaryButton type="submit" disabled={!draft.trim()} icon={status === 'failed' && draft.trim() ? <RotateCcw size={15} /> : <Send size={15} />}>{status === 'failed' && draft.trim() ? 'Reenviar mensagem' : 'Enviar'}</PrimaryButton>}
   </form>
 }

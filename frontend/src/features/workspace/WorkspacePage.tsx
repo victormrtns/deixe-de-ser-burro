@@ -12,6 +12,9 @@ import { NeutralButton } from '@/ui/Button'
 import { PublishDialog, type PublishResult } from '@/features/publishing/PublishDialog'
 import { PublicationStatus } from '@/features/publishing/PublicationStatus'
 import { VersionHistory } from './VersionHistory'
+import { PanelResizer } from './PanelResizer'
+import { useDocumentTitle } from '@/ui/useDocumentTitle'
+import { useToast } from '@/ui/ToastProvider'
 import './workspace.css'
 import './workspace-sovereign.css'
 
@@ -24,7 +27,8 @@ export function WorkspacePage({ save: injectedSave }: { save?: SaveMarkdown }) {
   const { id } = useParams()
   const api = useApi() as HttpAppApi
   const { data, error, mutate } = useSWR(id ? `writings/${id}/workspace` : null, () => api.writings.getWorkspace(id!))
-  if (id && error) return <main><h1>Não foi possível abrir esta escrita</h1><button onClick={() => void mutate()}>Tentar novamente</button></main>
+  useDocumentTitle(`${data?.writing.title ?? 'Escrita'} — deixedeserburro`)
+  if (id && error) return <main className="route-error" aria-label="deixedeserburro"><h1>Não foi possível abrir esta escrita</h1><p>O estúdio não conseguiu carregar o texto e a conversa. Nada foi perdido.</p><NeutralButton onClick={() => void mutate()}>Tentar novamente</NeutralButton></main>
   if (id && !data) return <main aria-label="Carregando escrita">Abrindo escrita…</main>
   const writing = data?.writing ?? demoWriting
   const save: SaveMarkdown = injectedSave ?? ((markdown, expectedVersion) => api.writings.save({ id: writing.id, markdown, expectedVersion }))
@@ -35,6 +39,7 @@ export function WorkspacePage({ save: injectedSave }: { save?: SaveMarkdown }) {
 
 function WorkspaceLoaded({ writing, save, messages, reload, restore }: { writing: Writing; save: SaveMarkdown; messages: Message[]; reload?: () => Promise<Writing>; restore?: (versionNumber: number, expectedVersion: number) => Promise<Writing> }) {
   const api = useApi() as HttpAppApi
+  const { notify } = useToast()
   const [panel, setPanel] = useState<Panel>('document')
   const [bookContextOpen, setBookContextOpen] = useState(true)
   const [assistantOpen, setAssistantOpen] = useState(true)
@@ -55,20 +60,20 @@ function WorkspaceLoaded({ writing, save, messages, reload, restore }: { writing
       </div>
     </header>
     <main className={layout}>
-      {bookContextOpen ? <nav aria-label="Contexto da escrita">
+      {bookContextOpen ? <><nav aria-label="Contexto da escrita">
         <div className="workspace-book"><BookOpen size={18} /><span>Livro ativo</span><strong>Trabalho focado</strong><small>Cal Newport</small></div>
         <button className={panel === 'conversation' ? 'is-active' : ''} onClick={() => { setPanel('conversation'); setAssistantOpen(true) }}><MessageCircle size={16} /> Conversa</button>
         <button className={panel === 'suggestions' ? 'is-active' : ''} onClick={() => { setPanel('suggestions'); setAssistantOpen(true) }}><Sparkles size={16} /> Sugestões</button>
         {writing.id !== 'writing-demo' ? <VersionHistory writingId={writing.id} /> : null}
-      </nav> : null}
+      </nav><PanelResizer panel="nav" /></> : null}
       <Workspace.Panel title="Documento"><Workspace.Tabs /><Workspace.Canvas /></Workspace.Panel>
-      {assistantOpen ? <aside aria-label="Assistente">
+      {assistantOpen ? <><PanelResizer panel="aside" /><aside aria-label="Assistente">
         {panel === 'document' ? <div className="assistant-empty"><span className="eyebrow">Assistente de margem</span><h2>Pense junto com suas notas</h2><p>A conversa lê o Markdown atual e nunca altera o seu texto sozinha. Notas de áudio ainda não estão disponíveis nesta fase.</p><button type="button" onClick={() => setPanel('conversation')}>Abrir conversa</button></div> : null}
         {panel === 'conversation' ? <div className="unified-conversation"><ChatPanel writingId={writing.id} chat={api.chat} messages={messages} /></div> : null}
         {panel === 'suggestions' ? <SuggestionReview suggestion={suggestion} accept={() => Promise.resolve()} /> : null}
-      </aside> : null}
+      </aside></> : null}
     </main>
-    {publication ? <PublicationStatus publication={publication} onCancelCleanup={() => { void api.publishing.cancelCleanup(writing.id) }} onUnpublish={() => { void api.publishing.unpublish(writing.id).then(() => setPublication(undefined)) }} /> : null}
-    <PublishDialog open={publishOpen} onOpenChange={setPublishOpen} articleTitle={writing.title} publish={(key) => api.publishing.publish(writing.id, key)} onPublished={setPublication} />
+    {publication ? <PublicationStatus publication={publication} onCancelCleanup={() => { void api.publishing.cancelCleanup(writing.id).then(() => notify('Limpeza cancelada. O contexto privado fica.', 'success')).catch(() => notify('Não foi possível cancelar a limpeza. A publicação segue como está.', 'error')) }} onUnpublish={() => { void api.publishing.unpublish(writing.id).then(() => { setPublication(undefined); notify('Voltou para rascunho. O artigo saiu do ar.', 'success') }).catch(() => notify('Não foi possível retirar a publicação. O artigo continua no ar.', 'error')) }} /> : null}
+    <PublishDialog open={publishOpen} onOpenChange={setPublishOpen} articleTitle={writing.title} publish={(key) => api.publishing.publish(writing.id, key)} onPublished={(result) => { setPublication(result); notify('Publicado. A versão congelada já está no ar.', 'success') }} />
   </Workspace.Frame></WorkspaceProvider>
 }
