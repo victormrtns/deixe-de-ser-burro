@@ -6,11 +6,12 @@ type Toast = { id: number; message: string; tone: ToastTone }
 type ToastActions = { notify(message: string, tone?: ToastTone): void }
 
 const ToastContext = createContext<ToastActions | null>(null)
+let nextToastId = 0
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const notify = useCallback((message: string, tone: ToastTone = 'info') => {
-    setToasts((current) => [...current.filter((item) => item.message !== message), { id: Date.now(), message, tone }].slice(-3))
+    setToasts((current) => [...current.filter((item) => item.message !== message), { id: (nextToastId += 1), message, tone }].slice(-3))
   }, [])
   const actions = useMemo(() => ({ notify }), [notify])
 

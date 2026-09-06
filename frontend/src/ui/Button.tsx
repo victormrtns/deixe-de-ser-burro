@@ -6,8 +6,9 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   icon?: ReactNode
 }
 
-function ActionButton({ busy = false, className = '', children, icon, disabled, ...props }: ButtonProps & { tone: string }) {
-  const { tone, ...buttonProps } = props
+type ButtonTone = 'primary' | 'neutral' | 'ghost' | 'danger'
+
+function ActionButton({ tone, busy = false, className = '', children, icon, disabled, ...buttonProps }: ButtonProps & { tone: ButtonTone }) {
   return (
     <button
       {...buttonProps}

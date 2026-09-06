@@ -7,7 +7,7 @@ import { Workspace } from './Workspace'
 import { useParams } from 'react-router-dom'
 import useSWR from 'swr'
 import { useApi } from '@/services/api'
-import type { HttpAppApi, Message, Writing } from '@/services/contracts'
+import type { Message, Writing } from '@/services/contracts'
 import { NeutralButton } from '@/ui/Button'
 import { PublishDialog, type PublishResult } from '@/features/publishing/PublishDialog'
 import { PublicationStatus } from '@/features/publishing/PublicationStatus'
@@ -31,7 +31,7 @@ function useStickyPanel(key: string, fallback: boolean) {
 
 export function WorkspacePage({ save: injectedSave }: { save?: SaveMarkdown }) {
   const { id } = useParams()
-  const api = useApi() as HttpAppApi
+  const api = useApi()
   const { data, error, mutate } = useSWR(id ? `writings/${id}/workspace` : null, () => api.writings.getWorkspace(id!))
   useDocumentTitle(`${data?.writing.title ?? 'Escrita'} — deixedeserburro`)
   if (id && error) return <main className="route-error" aria-label="deixedeserburro"><h1>Não foi possível abrir esta escrita</h1><p>O estúdio não conseguiu carregar o texto e a conversa. Nada foi perdido.</p><NeutralButton onClick={() => void mutate()}>Tentar novamente</NeutralButton></main>
@@ -44,7 +44,7 @@ export function WorkspacePage({ save: injectedSave }: { save?: SaveMarkdown }) {
 }
 
 function WorkspaceLoaded({ writing, save, messages, reload, restore }: { writing: Writing; save: SaveMarkdown; messages: Message[]; reload?: () => Promise<Writing>; restore?: (versionNumber: number, expectedVersion: number) => Promise<Writing> }) {
-  const api = useApi() as HttpAppApi
+  const api = useApi()
   const { notify } = useToast()
   const [panel, setPanel] = useState<Panel>('document')
   const [bookContextOpen, toggleBookContext] = useStickyPanel('book-context', true)

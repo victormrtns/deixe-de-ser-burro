@@ -1,11 +1,10 @@
 import useSWR from 'swr'
 import { useApi } from '@/services/api'
-import type { HttpAppApi } from '@/services/contracts'
 import { useWorkspace } from './WorkspaceProvider'
 import { useToast } from '@/ui/ToastProvider'
 
 export function VersionHistory({ writingId }: { writingId: string }) {
-  const api = useApi() as HttpAppApi
+  const api = useApi()
   const { actions } = useWorkspace()
   const { notify } = useToast()
   const { data, error, mutate } = useSWR(`writings/${writingId}/versions`, () => api.writings.listVersions(writingId))

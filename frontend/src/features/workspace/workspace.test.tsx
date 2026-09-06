@@ -6,7 +6,7 @@ import { WorkspaceProvider, type SaveMarkdown } from '@/features/workspace/Works
 import { Workspace } from '@/features/workspace/Workspace'
 import { AppProviders } from '@/app/AppProviders'
 import { createMockApi } from '@/services/mockApi'
-import type { HttpAppApi } from '@/services/contracts'
+import type { AppApi } from '@/services/contracts'
 
 afterEach(() => vi.useRealTimers())
 
@@ -72,7 +72,7 @@ it('mantém o editor utilizável durante a geração do assistente', async () =>
   const user = userEvent.setup()
   const mock = createMockApi()
   let release = () => {}
-  const api: HttpAppApi = { ...mock, chat: { ...mock.chat, streamReply: async (_writingId, _content, _key, _signal, onEvent) => {
+  const api: AppApi = { ...mock, chat: { ...mock.chat, streamReply: async (_writingId, _content, _key, _signal, onEvent) => {
     onEvent({ type: 'generation.started', version: 1, attemptId: 'a1', sequence: 0, messageId: 'assistant-1', attemptNumber: 1 })
     onEvent({ type: 'response.delta', version: 1, attemptId: 'a1', sequence: 1, delta: 'Trecho parcial' })
     await new Promise<void>((resolve) => { release = resolve })
