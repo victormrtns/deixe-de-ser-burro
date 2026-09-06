@@ -23,6 +23,12 @@ const suggestion = { id: 'suggestion-01', writingId: 'writing-01', summary: 'Uma
 
 const demoWriting: Writing = { id: 'writing-demo', bookId: 'book-demo', title: 'Ritual antes do foco', markdown: '# Ritual antes do foco\n\nA concentração começa antes do trabalho.', sourceRange: 'Capítulos 3–4', status: 'draft', version: 1, updatedAt: new Date().toISOString() }
 
+function useStickyPanel(key: string, fallback: boolean) {
+  const [open, setOpen] = useState(() => { try { return localStorage.getItem(`workspace:${key}`) !== 'closed' } catch { return fallback } })
+  const toggle = () => setOpen((current) => { const next = !current; try { localStorage.setItem(`workspace:${key}`, next ? 'open' : 'closed') } catch { /* preferência é descartável */ } return next })
+  return [open, toggle] as const
+}
+
 export function WorkspacePage({ save: injectedSave }: { save?: SaveMarkdown }) {
   const { id } = useParams()
   const api = useApi() as HttpAppApi
@@ -41,20 +47,20 @@ function WorkspaceLoaded({ writing, save, messages, reload, restore }: { writing
   const api = useApi() as HttpAppApi
   const { notify } = useToast()
   const [panel, setPanel] = useState<Panel>('document')
-  const [bookContextOpen, setBookContextOpen] = useState(true)
-  const [assistantOpen, setAssistantOpen] = useState(true)
+  const [bookContextOpen, toggleBookContext] = useStickyPanel('book-context', true)
+  const [assistantOpen, toggleAssistant] = useStickyPanel('assistant', true)
   const [publishOpen, setPublishOpen] = useState(false)
   const [publication, setPublication] = useState<PublishResult>()
-  const focusDocument = () => { setBookContextOpen(false); setAssistantOpen(false); setPanel('document') }
+  const focusDocument = () => { if (bookContextOpen) toggleBookContext(); if (assistantOpen) toggleAssistant(); setPanel('document') }
   const layout = `workspace-feature-main${bookContextOpen ? '' : ' without-book'}${assistantOpen ? '' : ' without-assistant'}`
 
   return <WorkspaceProvider save={save} initialMarkdown={writing.markdown} initialVersion={writing.version} {...(reload ? { reload } : {})} {...(restore ? { restore } : {})}><Workspace.Frame>
     <header className="workspace-feature-header">
       <div><span className="eyebrow">Escrita em andamento</span><h1>{writing.title}</h1></div>
       <div className="workspace-header-actions">
-        <button type="button" aria-label={bookContextOpen ? 'Ocultar contexto do livro' : 'Mostrar contexto do livro'} aria-expanded={bookContextOpen} onClick={() => setBookContextOpen((open) => !open)}><PanelLeft size={16} /></button>
+        <button type="button" aria-label={bookContextOpen ? 'Ocultar contexto do livro' : 'Mostrar contexto do livro'} aria-expanded={bookContextOpen} onClick={toggleBookContext}><PanelLeft size={16} /></button>
         <button type="button" aria-label="Focar no documento" onClick={focusDocument}><Focus size={16} /></button>
-        <button type="button" aria-label={assistantOpen ? 'Ocultar assistente' : 'Mostrar assistente'} aria-expanded={assistantOpen} onClick={() => setAssistantOpen((open) => !open)}><PanelRight size={16} /></button>
+        <button type="button" aria-label={assistantOpen ? 'Ocultar assistente' : 'Mostrar assistente'} aria-expanded={assistantOpen} onClick={toggleAssistant}><PanelRight size={16} /></button>
         <Workspace.SaveStatus />
         <NeutralButton onClick={() => setPublishOpen(true)}>Publicar</NeutralButton>
       </div>
@@ -62,8 +68,8 @@ function WorkspaceLoaded({ writing, save, messages, reload, restore }: { writing
     <main className={layout}>
       {bookContextOpen ? <><nav aria-label="Contexto da escrita">
         <div className="workspace-book"><BookOpen size={18} /><span>Livro ativo</span><strong>Trabalho focado</strong><small>Cal Newport</small></div>
-        <button className={panel === 'conversation' ? 'is-active' : ''} onClick={() => { setPanel('conversation'); setAssistantOpen(true) }}><MessageCircle size={16} /> Conversa</button>
-        <button className={panel === 'suggestions' ? 'is-active' : ''} onClick={() => { setPanel('suggestions'); setAssistantOpen(true) }}><Sparkles size={16} /> Sugestões</button>
+        <button type="button" aria-pressed={panel === 'conversation'} className={panel === 'conversation' ? 'is-active' : ''} onClick={() => { setPanel('conversation'); if (!assistantOpen) toggleAssistant() }}><MessageCircle size={16} /> Conversa</button>
+        <button type="button" aria-pressed={panel === 'suggestions'} className={panel === 'suggestions' ? 'is-active' : ''} onClick={() => { setPanel('suggestions'); if (!assistantOpen) toggleAssistant() }}><Sparkles size={16} /> Sugestões</button>
         {writing.id !== 'writing-demo' ? <VersionHistory writingId={writing.id} /> : null}
       </nav><PanelResizer panel="nav" /></> : null}
       <Workspace.Panel title="Documento"><Workspace.Tabs /><Workspace.Canvas /></Workspace.Panel>

@@ -156,6 +156,48 @@ Todo diálogo carrega um rótulo em caixa alta acima do título — "Confirmaç�
 começo". A mesma marcação aparece em várias seções. Não foi tocado nesta passada porque
 é decisão de linguagem, não de componente.
 
+### Foco: o anel azul nas superfícies de escrita
+
+`globals.css` aplicava a mesma regra de foco a botão, link, `input` e `textarea`:
+anel de 2px **deslocado 3px para fora** mais um brilho de 3px. Em campo de texto,
+`:focus-visible` casa também no clique do mouse — o navegador considera que campo de
+escrita sempre precisa de indicador —, então bastava clicar para escrever e aparecia
+um halo azul duplo saltando por cima dos vizinhos. No editor, que é um `textarea` de
+760px por painel inteiro, virava uma moldura azul em volta de tudo.
+
+O `.markdown-editor` até declarava `outline:0`, mas `textarea:focus-visible` (0,1,1)
+vence `.markdown-editor` (0,1,0) na especificidade. A tentativa do autor nunca teve efeito.
+
+Agora: botões e links seguem com o anel de fora, que é o certo para eles. Campos de
+texto recebem o anel **por dentro** da própria borda, sem brilho — o campo acende em
+vez de ganhar halo. O editor não recebe anel nenhum: o cursor é o indicador, como no
+Overleaf, e o painel marca a borda esquerda em azul para quem navega por teclado.
+
+### Estúdio: o que mais estava errado
+
+- **`role="tab"` que não controlava nada.** As três abas do documento não tinham
+  `aria-controls`, não havia `tabpanel`, e as setas não trocavam de aba. Agora seguem o
+  padrão WAI-ARIA: setas navegam, só a aba ativa entra na ordem de tabulação, e o canvas
+  é o painel que elas controlam.
+- **`100vh` no estúdio.** Em navegador móvel a barra de endereço torna `100vh` maior que
+  o viewport visível, cortando o rodapé do layout. Trocado por `100dvh`.
+- **"Lado a lado" em 390px** eram duas colunas de ~190px. No mobile as abas escondiam o
+  botão em vez de resolver o layout; agora o modo empilha.
+- **Botões da nav do assistente** tinham só a classe `is-active`: leitor de tela não
+  sabia qual painel estava aberto. Ganharam `aria-pressed`.
+- **`SaveStatus`** desenhava o próprio link de ação no CSS do workspace. Passou a usar
+  `.text-action`.
+- **Estado dos painéis** agora persiste como no Overleaf — as larguras já persistiam, o
+  aberto/fechado não.
+
+### Fica registrado: os botões de ícone do cabeçalho
+
+Os três controles de painel no topo do workspace são quadrados de 32px desenhados em
+`workspace-sovereign.css`. Passam no alvo mínimo de 24px da WCAG 2.2, e são o formato
+certo para uma barra de ferramentas ao estilo Overleaf — mas são uma sexta forma de ação
+que o contrato não nomeia. Ou viram uma primitiva `.icon-button` em `ui/`, ou o contrato
+passa a listar a forma. Não resolvi para não colidir com as branches paralelas.
+
 ---
 
 ## Como verificar
