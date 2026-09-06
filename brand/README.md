@@ -40,3 +40,9 @@ As cores seguem os tokens de [frontend/src/styles/tokens.css](../frontend/src/st
 | `#343433` | Selo da versão invertida |
 
 O nome usa Bricolage Grotesque, peso 400 em `deixedeser` e 750 em `burro`, convertido em paths nos arquivos finais. Escreva a marca em minúsculas: **deixedeserburro**.
+
+## Licença destes arquivos
+
+O código do repositório está sob [Apache License 2.0](../LICENSE). **Os arquivos deste diretório e o nome deixedeserburro não estão.** A Seção 6 da licença nega permissão para usar nomes comerciais, marcas e nomes de produto do licenciante.
+
+Um fork deve substituir estes arquivos, o nome nos títulos de página e a assinatura do rodapé antes de publicar. Referir-se ao projeto original pelo nome, para descrever origem ou compatibilidade, é uso razoável e não requer permissão. Ver [NOTICE](../NOTICE).

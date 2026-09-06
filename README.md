@@ -16,6 +16,7 @@
   <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-Python%203.12+-0073d8">
   <img alt="PostgreSQL 16" src="https://img.shields.io/badge/PostgreSQL-16-0073d8">
   <img alt="WCAG 2.2 AA" src="https://img.shields.io/badge/WCAG-2.2%20AA-00c978">
+  <img alt="Licença Apache 2.0" src="https://img.shields.io/badge/licen%C3%A7a-Apache%202.0-0073d8">
   <img alt="pt-BR" src="https://img.shields.io/badge/idioma-pt--BR-7e7e7d">
 </p>
 
@@ -270,6 +271,20 @@ e não dependem de fonte instalada.
 O nome público é **deixedeserburro**. Identificadores técnicos — pacote, banco, cookie e
 caminho de implantação — ainda usam `entrelinhas`, e isso é deliberado: renomear exige
 migração e não afeta a execução.
+
+**O nome e os arquivos de `brand/` não estão sob a licença do código.** Faça o fork à
+vontade, mas dê a ele nome e identidade próprios antes de publicar: troque os arquivos de
+`brand/`, o nome nos títulos de página e a assinatura do rodapé. Citar o projeto original
+para descrever origem ou compatibilidade é uso razoável e não precisa de permissão.
+
+## Licença
+
+Código sob [Apache License 2.0](LICENSE). Você pode usar, modificar, distribuir e vender,
+inclusive em produto fechado, mantendo o aviso de copyright e registrando o que mudou.
+
+Escolhi Apache em vez de MIT por duas cláusulas que a MIT não tem: concessão expressa de
+patentes, e a Seção 6, que nega permissão para usar o nome e a marca do projeto. Ver
+[NOTICE](NOTICE) para o que a marca cobre.
 
 ## Princípios
 
