@@ -6,6 +6,7 @@ import type { HttpAppApi } from '@/services/contracts'
 import { NeutralButton, PrimaryButton } from '@/ui/Button'
 import { WritingFormDialog } from './LibraryFormDialog'
 import { useBook, useBookWritings } from './useLibrary'
+import { useDocumentTitle } from '@/ui/useDocumentTitle'
 
 export function BookDetailPage() {
   const { bookId = '' } = useParams()
@@ -14,6 +15,7 @@ export function BookDetailPage() {
   const { data: book, error: bookError, mutate: retryBook } = useBook(bookId)
   const { data: writings, error: writingsError, mutate } = useBookWritings(bookId)
   const [dialogOpen, setDialogOpen] = useState(false)
+  useDocumentTitle(`${book?.title ?? 'Livro'} — deixedeserburro`)
 
   if (bookError || writingsError) return <main className="book-detail"><h1>Não foi possível abrir este livro</h1><NeutralButton onClick={() => void Promise.all([retryBook(), mutate()])}>Tentar novamente</NeutralButton></main>
   if (!book || !writings) return <main className="book-detail" aria-label="Carregando livro">Abrindo livro…</main>

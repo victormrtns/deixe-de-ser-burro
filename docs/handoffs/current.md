@@ -1,4 +1,4 @@
-# Handoff — Books Blog AI / Entrelinhas
+# Handoff — Books Blog AI / deixedeserburro
 
 ## Estado atual (2026-08-29, integração frontend-backend implementada)
 

@@ -9,7 +9,7 @@ testes, as decisões serão consolidadas em uma especificação formal em
 
 ## Caso de uso aprovado
 
-O Entrelinhas é um sistema editorial assistido por IA, reativo às entradas do
+O deixedeserburro é um sistema editorial assistido por IA, reativo às entradas do
 autor. A IA recebe o Markdown e as mensagens da escrita; no futuro também
 receberá links e áudio. Ela mantém o contexto automaticamente, incorpora
 feedback explícito e pode responder ou propor alterações, mas nunca modifica o
@@ -74,7 +74,7 @@ stream de resposta
 - `ai/providers/openai`: SDK e tradução dos eventos específicos da OpenAI.
 - `usage`: tokens, custo estimado e bloqueio por orçamento.
 - `writings`: proprietário exclusivo do Markdown e de suas versões.
-- frontend: consome eventos do domínio do Entrelinhas, sem conhecer eventos
+- frontend: consome eventos do domínio do deixedeserburro, sem conhecer eventos
   específicos da OpenAI.
 
 ## Memória dinâmica aprovada
@@ -110,7 +110,7 @@ pedido atual
 ```
 
 As skills usadas pelo Codex durante o desenvolvimento podem inspirar a linha
-editorial, mas não são dependência de runtime do Entrelinhas. O produto consome
+editorial, mas não são dependência de runtime do deixedeserburro. O produto consome
 um artefato editorial próprio, explícito e versionado.
 
 ### Regras fixas

@@ -9,7 +9,7 @@ Este documento complementa a especificação principal em `docs/superpowers/spec
 ## Objetivos
 
 1. Criar uma landing pública editorial que ajude qualquer leitor, sem autenticação, a descobrir artigos e navegar pelos livros que já originaram publicações.
-2. Preservar o caráter autoral do Entrelinhas sem apresentar o produto como SaaS, ferramenta de IA, dashboard ou feed de notícias.
+2. Preservar o caráter autoral do deixedeserburro sem apresentar o produto como SaaS, ferramenta de IA, dashboard ou feed de notícias.
 3. Unificar texto, áudio e links no mesmo fluxo cronológico de conversa da escrita.
 4. Preparar contratos de frontend claros para a futura implementação P0 do backend.
 
@@ -32,7 +32,7 @@ O artigo principal é selecionado manualmente. Quando não houver uma seleção 
 
 ### Cabeçalho público
 
-O cabeçalho contém a marca Entrelinhas e somente destinos que existem e funcionam:
+O cabeçalho contém a marca deixedeserburro e somente destinos que existem e funcionam:
 
 - `Artigos`, apontando para o arquivo público;
 - `Livros`, apontando para a estante publicada;
@@ -83,7 +83,7 @@ Cada entrada mantém título, livro, data e tempo de leitura. O arquivo oferece 
 
 ### Sobre
 
-Uma faixa curta explica que Entrelinhas é uma publicação independente de ensaios nascidos de livros, notas e estudo. O texto não promete frequência, comunidade ou recursos ainda inexistentes.
+Uma faixa curta explica que deixedeserburro é uma publicação independente de ensaios nascidos de livros, notas e estudo. O texto não promete frequência, comunidade ou recursos ainda inexistentes.
 
 ## Rotas públicas
 

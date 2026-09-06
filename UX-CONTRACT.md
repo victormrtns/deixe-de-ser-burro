@@ -1,4 +1,4 @@
-# Entrelinhas — contrato de experiência
+# deixedeserburro — contrato de experiência
 
 ## Fontes e escopo
 
@@ -6,27 +6,36 @@
 |---|---|---|
 | Produto, privacidade e ciclo de publicação | `docs/superpowers/specs/2026-08-28-ai-books-learning-blog-design.md` | Área privada autenticada; artigo público nunca expõe artefatos de trabalho; limpeza tem recuperação por três dias. |
 | Identidade e implementação | `docs/superpowers/plans/2026-08-28-visual-identity-frontend.md` | UI em pt-BR, WCAG 2.2 AA e contratos compartilhados. |
-| Referência visual | `design.md` | Papel claro, superfícies hairline, tipografia calma e acentos pontuais. |
+| Referência visual | `design.md` (canônico) | Papel claro, superfícies hairline, tipografia calma e acentos pontuais. `DESIGN.md` está superado e não vale como fonte. |
+| Marca e ativos | `brand/` e `brand/README.md` | Nome público `deixedeserburro`; logo, wordmark e favicon vêm dos arquivos versionados, com as faixas de tamanho do README. |
 
 ## Rotas e títulos
 
 | Rota | Título | Acesso | Destino principal |
 |---|---|---|---|
-| `/` | `Entrelinhas — Leituras que continuam` | Público | Estante pública |
-| `/artigos/:slug` | `Título do artigo — Entrelinhas` | Público | Leitura do artigo |
-| `/entrar` | `Entrar — Entrelinhas` | Público | Autenticação do autor |
-| `/studio` | `Biblioteca — Entrelinhas` | Privado | Livros e escritas |
-| `/studio/livros/:id` | `Livro — Entrelinhas` | Privado | Escritas do livro |
-| `/studio/escritas/:id` | `Escrita — Entrelinhas` | Privado | Workspace |
+| `/` | `deixedeserburro — Leituras que continuam` | Público | Estante pública |
+| `/artigos` | `Artigos — deixedeserburro` | Público | Índice de artigos |
+| `/artigos/:slug` | `Título do artigo — deixedeserburro` | Público | Leitura do artigo |
+| `/livros` | `Livros — deixedeserburro` | Público | Índice de livros |
+| `/livros/:slug` | `Título do livro — deixedeserburro` | Público | Artigos publicados do livro |
+| `/sobre` | `Sobre — deixedeserburro` | Público | Sobre a publicação |
+| `/entrar` | `Entrar — deixedeserburro` | Público | Autenticação do autor |
+| `/studio` | `Biblioteca — deixedeserburro` | Privado | Livros e escritas |
+| `/studio/livros/:bookId` | `Título do livro — deixedeserburro` | Privado | Escritas do livro |
+| `/studio/escritas/:id` | `Título da escrita — deixedeserburro` | Privado | Workspace |
+| `/sem-permissao` | `Acesso restrito — deixedeserburro` | Público | Página 403 |
+| `*` | `Página não encontrada — deixedeserburro` | Público | Página 404 |
 
-Rotas 403, 404 e falhas usam páginas próprias, preservam navegação possível e recebem títulos honestos. Rotas públicas nunca carregam navegação ou módulos privados.
+O sufixo da marca é sempre ` — deixedeserburro`; só a landing inverte a ordem. Enquanto o recurso carrega, o título usa o rótulo genérico da rota (`Livro`, `Escrita`, `Artigo`) e nunca herda o título da página anterior.
+
+As páginas de 403, 404 e de falha são próprias, preservam a navegação possível e recebem títulos honestos. Rotas públicas nunca carregam navegação ou módulos privados.
 
 ## Mapa canônico de UI
 
 | Capability | Canonical owner | Source of truth | Allowed variants | Verification |
 |---|---|---|---|---|
 | Form | `Field` e formulários `noValidate` | Este contrato | criar / editar / entrar | unidade + teclado |
-| Scrollbar | `styles/globals.css` | `DESIGN.md` | apenas geometria documentada | estilo computado |
+| Scrollbar | `styles/globals.css` | Este contrato | apenas geometria documentada | estilo computado |
 | Toast | `ToastProvider` | Este contrato | sucesso / aviso / informação / erro | live region |
 | Dialog | `Dialog` | Este contrato | modal / alertdialog | foco + Escape |
 | CRUD | rotas e serviços de biblioteca | Especificação do produto | retornar à lista / permanecer | E2E completo |

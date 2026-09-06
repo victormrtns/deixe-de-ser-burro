@@ -8,7 +8,7 @@ neste repositório, indica o que ler, propõe um exercício que produz artefato
 verificável e fixa o teste de compreensão.
 
 A regra de `ia/CONTEUDOS.md:9-15` continua valendo: um conteúdo só está aprendido
-quando o autor explica com palavras próprias, liga a uma decisão do Entrelinhas,
+quando o autor explica com palavras próprias, liga a uma decisão do deixedeserburro,
 reconhece uma falha típica, produz o exercício e revisa o teste correspondente.
 
 O plano é enviesado de propósito para os modos de falha que este projeto vai
@@ -104,7 +104,7 @@ aceito evita transformar erro de programação em "assistente indisponível".
 ### Exercício
 
 Escrever à mão, em um arquivo de rascunho, o schema da sugestão editorial do
-Entrelinhas, com no máximo cinco campos, e ao lado de cada campo uma linha
+deixedeserburro, com no máximo cinco campos, e ao lado de cada campo uma linha
 dizendo o que ele impede que o modelo faça. Depois riscar todo campo que não
 impede nada. O que sobrar é o schema da implementação.
 

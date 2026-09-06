@@ -6,7 +6,7 @@
 
 **Architecture:** Extend the existing typed service boundary with public projections and a discriminated conversation-event model, keeping mocks as the current adapter until FastAPI exists. Public routes consume only public types; the private workspace composes one conversation timeline and one multimodal composer beside the canonical Markdown document.
 
-**Tech Stack:** React 19, TypeScript 5.9, React Router 7, SWR 2, MSW 2, Vite 7, Vitest, Testing Library, Playwright, axe-core, existing Entrelinhas CSS tokens and shared UI primitives.
+**Tech Stack:** React 19, TypeScript 5.9, React Router 7, SWR 2, MSW 2, Vite 7, Vitest, Testing Library, Playwright, axe-core, existing deixedeserburro CSS tokens and shared UI primitives.
 
 **Spec:** `docs/superpowers/specs/2026-08-28-public-landing-and-unified-conversation-design.md`
 
@@ -172,10 +172,10 @@ git commit -m "feat: add public editorial projections"
 
 ```tsx
 it.each([
-  ['/artigos', /Artigos — Entrelinhas/],
-  ['/livros', /Livros — Entrelinhas/],
-  ['/livros/trabalho-focado', /Trabalho focado — Entrelinhas/],
-  ['/sobre', /Sobre — Entrelinhas/],
+  ['/artigos', /Artigos — deixedeserburro/],
+  ['/livros', /Livros — deixedeserburro/],
+  ['/livros/trabalho-focado', /Trabalho focado — deixedeserburro/],
+  ['/sobre', /Sobre — deixedeserburro/],
 ])('renders the public route %s', async (path, title) => {
   render(<RouterProvider router={createAppRouter([path])} />)
   expect(await screen.findByRole('main')).toBeInTheDocument()

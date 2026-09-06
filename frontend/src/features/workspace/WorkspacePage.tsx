@@ -12,6 +12,7 @@ import { NeutralButton } from '@/ui/Button'
 import { PublishDialog, type PublishResult } from '@/features/publishing/PublishDialog'
 import { PublicationStatus } from '@/features/publishing/PublicationStatus'
 import { VersionHistory } from './VersionHistory'
+import { useDocumentTitle } from '@/ui/useDocumentTitle'
 import './workspace.css'
 import './workspace-sovereign.css'
 
@@ -24,6 +25,7 @@ export function WorkspacePage({ save: injectedSave }: { save?: SaveMarkdown }) {
   const { id } = useParams()
   const api = useApi() as HttpAppApi
   const { data, error, mutate } = useSWR(id ? `writings/${id}/workspace` : null, () => api.writings.getWorkspace(id!))
+  useDocumentTitle(`${data?.writing.title ?? 'Escrita'} — deixedeserburro`)
   if (id && error) return <main><h1>Não foi possível abrir esta escrita</h1><button onClick={() => void mutate()}>Tentar novamente</button></main>
   if (id && !data) return <main aria-label="Carregando escrita">Abrindo escrita…</main>
   const writing = data?.writing ?? demoWriting

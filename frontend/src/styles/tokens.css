@@ -49,7 +49,7 @@
   --shadow-surface: inset 0 0 0 1px var(--color-surface-muted);
   --shadow-overlay: 0 0 24px 0 rgb(0 0 0 / 15%);
   --shadow-raised: 0 1px 6px 0 rgb(0 0 0 / 4%), 0 0 24px 0 rgb(0 0 0 / 5%);
-  --focus-ring: 0 0 0 3px rgb(0 134 252 / 24%);
+  --focus-ring: 0 0 0 3px rgb(0 115 216 / 24%);
 
   /* Scrollbar: design.md nao define este papel. Valores preservados. */
   --scrollbar-track: var(--color-surface-muted);

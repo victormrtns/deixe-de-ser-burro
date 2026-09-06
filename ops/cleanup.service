@@ -1,5 +1,5 @@
 [Unit]
-Description=Entrelinhas: processa limpezas de publicação vencidas
+Description=deixedeserburro: processa limpezas de publicação vencidas
 Requires=docker.service
 After=docker.service
 

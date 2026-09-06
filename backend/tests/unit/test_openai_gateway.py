@@ -34,7 +34,7 @@ from app.config import Settings
 from app.errors import AppError
 
 API_KEY = "sk-test-super-secret-key"
-INSTRUCTIONS = "Você é o assistente editorial do Entrelinhas."
+INSTRUCTIONS = "Você é o assistente editorial do deixedeserburro."
 MARKDOWN = "# Capítulo secreto\n\nO manuscrito inteiro do autor."
 REQUEST = ModelRequest(
     instructions=INSTRUCTIONS, input=MARKDOWN, model="gpt-5-mini", max_output_tokens=800

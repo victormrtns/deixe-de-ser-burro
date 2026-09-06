@@ -1,5 +1,5 @@
 [Unit]
-Description=Entrelinhas: agenda horária da limpeza de publicações
+Description=deixedeserburro: agenda horária da limpeza de publicações
 
 [Timer]
 OnCalendar=hourly

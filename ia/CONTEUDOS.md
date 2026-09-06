@@ -1,4 +1,4 @@
-# Conteúdos de estudo da IA — Entrelinhas
+# Conteúdos de estudo da IA — deixedeserburro
 
 ## Como estudar
 
@@ -9,7 +9,7 @@ revisar a implementação e avaliar o resultado.
 Para considerar um conteúdo aprendido, o autor deve conseguir:
 
 1. explicar o conceito com palavras próprias;
-2. relacioná-lo a uma decisão concreta do Entrelinhas;
+2. relacioná-lo a uma decisão concreta do deixedeserburro;
 3. reconhecer pelo menos uma falha ou uso incorreto;
 4. produzir o exercício indicado;
 5. revisar o teste que demonstra o comportamento.
@@ -64,7 +64,7 @@ Estudar exatamente:
 
 Saber decidir:
 
-- quais dados são persistidos pelo Entrelinhas;
+- quais dados são persistidos pelo deixedeserburro;
 - se `store` ficará desabilitado inicialmente;
 - quais erros podem ser tentados novamente.
 

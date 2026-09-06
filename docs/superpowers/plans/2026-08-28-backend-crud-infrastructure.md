@@ -142,7 +142,7 @@ Expected: FAIL because `app.main` or `create_app` does not exist.
 from fastapi import FastAPI
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="Entrelinhas API")
+    app = FastAPI(title="deixedeserburro API")
 
     @app.get("/api/health/live")
     async def live() -> dict[str, str]:

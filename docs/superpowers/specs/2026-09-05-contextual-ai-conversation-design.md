@@ -2,7 +2,7 @@
 
 ## Contexto
 
-O Entrelinhas já possui autenticação, biblioteca, escritas com Markdown
+O deixedeserburro já possui autenticação, biblioteca, escritas com Markdown
 versionado, publicação e leitura pública. Chat, áudio, sugestões e uso de IA
 ainda são demonstrativos no frontend e não possuem implementação real no
 backend.
@@ -89,7 +89,7 @@ eventos de domínio em streaming
 - `ai/providers/openai`: cliente OpenAI e tradução para eventos do domínio.
 - `usage`: reserva, contabilização e bloqueio por orçamento.
 - `writings`: Markdown e versões, consumidos somente para leitura nesta fase.
-- frontend: consome contratos e eventos do Entrelinhas, sem importar tipos ou
+- frontend: consome contratos e eventos do deixedeserburro, sem importar tipos ou
   nomes de eventos da OpenAI.
 
 Não será criada uma abstração genérica para todos os provedores. O contrato
@@ -225,7 +225,7 @@ no documento continuam independentes durante todo o fluxo.
 
 O transporte usa `POST` autenticado com resposta `text/event-stream`, consumida
 pelo frontend com `fetch` e leitura incremental do corpo. Os eventos públicos
-do Entrelinhas são:
+do deixedeserburro são:
 
 - `generation.started`: tentativa aceita e identificada;
 - `response.delta`: fragmento textual ordenado;
@@ -246,7 +246,7 @@ automático. `Tentar novamente` cria uma nova tentativa auditável.
 - Chave somente em variável de ambiente do backend.
 - `gpt-5-mini` como primeiro candidato, não como decisão permanente.
 - `max_output_tokens` inicial de 800.
-- `store=false` nas chamadas da Responses API; o Entrelinhas mantém sua própria
+- `store=false` nas chamadas da Responses API; o deixedeserburro mantém sua própria
   persistência.
 - Timeouts explícitos e erros do SDK traduzidos para códigos internos.
 
