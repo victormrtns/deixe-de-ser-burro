@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">deixedeserburro — microícone</title>
+  <desc id="desc">Perfil de burro com orelhas longas e focinho saliente, redesenhado para 16 a 48 pixels.</desc>
+  <circle cx="32" cy="35" r="28" fill="#e5d5c3"/>
+  <path d="M22 28C16 20 12 9 15 4C23 7 29 18 29 28ZM30 27C30 15 35 3 42 3C47 9 40 21 37 29Z" fill="#121212"/>
+  <path d="M23 23C20 19 17 12 17 9C22 14 24 18 25 24ZM33 24C33 17 37 10 40 8C40 14 37 20 35 25Z" fill="#fbfaf9"/>
+  <path d="M23 24C35 20 45 27 46 33L47 38C57 37 61 45 56 52C53 58 45 59 40 57L43 60Q32 65 22 59L24 51C17 47 16 40 18 33Q19 27 23 24Z" fill="#121212"/>
+  <path d="M32 28C39 27 42 32 42 39L43 43C50 40 55 44 53 49C52 55 45 56 40 54C34 57 27 53 28 47C28 43 32 41 32 37C32 33 30 30 32 28Z" fill="#fbfaf9"/>
+  <ellipse cx="37" cy="36" rx="2" ry="2.5" fill="#121212"/>
+  <path d="M49 47L51 46" stroke="#121212" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

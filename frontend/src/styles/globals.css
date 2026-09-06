@@ -72,7 +72,7 @@ textarea:focus-visible,
 }
 
 ::selection {
-  background: #ffdfd2;
+  background: var(--color-annotation-wash);
   color: var(--color-ink);
 }
 

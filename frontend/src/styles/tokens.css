@@ -13,6 +13,22 @@
   --color-danger: #c91d2e;
   --color-focus: #0086fc;
 
+  /* Estados derivados da paleta (evitam literais nas folhas de feature). */
+  --color-ink-hover: #2a2a29;
+  --color-danger-hover: #a91423;
+
+  /* Lavagens semanticas: fundo claro + tinta legivel para o mesmo significado. */
+  --color-annotation-wash: #ffdfd2;
+  --color-pending-wash: #fff4d1;
+  --color-pending-ink: #755000;
+  --color-success-wash: #dff4e9;
+
+  /* Cores ilustrativas: apenas capas, estados vazios e paineis decorativos. */
+  --color-cover-blue: #b8e0ff;
+  --color-cover-orange: #ffb399;
+  --color-cover-green: #a7e3c7;
+  --color-note: #fff4bd;
+
   --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', Inter, sans-serif;
   --font-body: 'Inter Variable', Inter, system-ui, sans-serif;
   --font-code: 'IBM Plex Mono', ui-monospace, monospace;
@@ -24,7 +40,8 @@
   --space-unit: 4px;
 
   --shadow-surface: inset 0 0 0 1px var(--color-surface-muted);
-  --shadow-overlay: 0 24px 80px rgb(18 18 18 / 18%);
+  --shadow-overlay: 0 0 24px 0 rgb(0 0 0 / 15%);
+  --shadow-raised: 0 1px 6px 0 rgb(0 0 0 / 4%), 0 0 24px 0 rgb(0 0 0 / 5%);
   --focus-ring: 0 0 0 3px rgb(0 134 252 / 24%);
 
   --scrollbar-track: var(--color-surface-muted);

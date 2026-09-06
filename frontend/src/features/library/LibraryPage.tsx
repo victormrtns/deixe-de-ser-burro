@@ -19,7 +19,7 @@ export function LibraryPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const { state: session, actions: sessionActions } = useSession()
 
-  return <ToastProvider><header className="app-header"><span className="brand">Entrelinhas</span><div className="header-actions"><span>{session.status === 'author' ? session.email : ''}</span><button type="button" className="text-button" onClick={() => void sessionActions.signOut().then(() => navigate('/'))}>Sair</button></div></header><main className="library" aria-label="Entrelinhas">
+  return <ToastProvider><header className="app-header"><span className="brand"><img src="/brand/logo-icon.svg" alt="" width={26} height={26} />Entrelinhas</span><div className="header-actions"><span>{session.status === 'author' ? session.email : ''}</span><button type="button" className="text-button" onClick={() => void sessionActions.signOut().then(() => navigate('/'))}>Sair</button></div></header><main className="library" aria-label="Entrelinhas">
     <section className="library-hero"><div><span className="eyebrow">Estúdio particular</span><h1>Sua biblioteca<br />de ideias</h1><p>Livros não terminam na última página. Aqui, cada leitura continua em notas e escritas.</p></div></section>
     <section><div className="section-title"><div><small>01</small><h2>Na estante</h2></div><NeutralButton onClick={() => setDialogOpen(true)} icon={<Plus size={16} />}>Adicionar livro</NeutralButton></div>
       {isLoading ? <div className="library-empty" aria-label="Carregando biblioteca">Abrindo a estante…</div> : null}
