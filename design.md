@@ -31,13 +31,13 @@ Family speaks in a warm parchment-and-marker language: a cream canvas (#fbfaf9) 
 
 ## Tokens — Typography
 
-### Family — Display and hero headings — the custom Family typeface at weight 500, letter-spacing tightening to -0.031em at 68px creates a slightly playful, slightly condensed character that defines the brand · `--font-family`
-- **Substitute:** Druk Wide Medium or GT America Compressed Medium
+### Bricolage Grotesque — Display and hero headings — a variable grotesque at weight 500, letter-spacing tightening to -0.031em at 68px, giving a slightly playful, slightly condensed character that defines the brand · `--font-family`
+- **Substitute:** Bricolage Grotesque (Google Fonts, variable) — this is the face the shipped brand assets in `brand/` are drawn in; the wordmark uses weight 400 on `deixedeser` and 750 on `burro`, converted to outlines
 - **Weights:** 500
 - **Sizes:** 44px, 68px
 - **Line height:** 1.09-1.10
 - **Letter spacing:** -0.031em at 68px, -0.020em at 44px
-- **Role:** Display and hero headings — the custom Family typeface at weight 500, letter-spacing tightening to -0.031em at 68px creates a slightly playful, slightly condensed character that defines the brand
+- **Role:** Display and hero headings — Bricolage Grotesque at weight 500, letter-spacing tightening to -0.031em at 68px, giving a slightly playful, slightly condensed character that defines the brand
 
 ### Inter — Body copy, nav text, card descriptions — Inter at regular weight carries the utility layer; tighter line-heights (1.42-1.53) for running text, generous (1.58) for caption-level · `--font-inter`
 - **Substitute:** Inter (Google Fonts)
@@ -197,7 +197,7 @@ The signature border technique: 1px inset box-shadow in #f2f0ed creates an inter
 ## Do's and Don'ts
 
 ### Do
-- Use the custom Family typeface at 44-68px weight 500 for all display and hero headings; never substitute system fonts at this scale
+- Use Bricolage Grotesque at 44-68px weight 500 for all display and hero headings; never substitute system fonts at this scale
 - Use 10px radius as the default for cards and nav surfaces; use 32-9999px only for pill buttons and badges
 - Build card definition with a 1px inset border in #f2f0ed rather than a drop shadow — the page should feel pressed into paper, not floating
 - Let #ff3e00 carry the 'demo link' and accent text role; keep ember orange for inline links and feature callouts, never as a filled button
@@ -209,7 +209,7 @@ The signature border technique: 1px inset box-shadow in #f2f0ed creates an inter
 - Never use a drop shadow larger than rgba(0,0,0,0.04) — the design system rejects heavy elevation
 - Don't use blue (#0086fc) as a filled CTA background; blue is reserved for inline links and list emphasis text
 - Don't introduce gradients — the system is strictly flat with hairline inset borders
-- Don't use Inter at the display sizes — display and hero headings must use the Family typeface at weight 500
+- Don't use Inter at the display sizes — display and hero headings must use Bricolage Grotesque at weight 500
 - Don't separate surfaces with white-on-white; always shift toward #f2f0ed stone or toward #121212 black for clear contrast
 - Don't add decoration to pill buttons — dark pill (#121212) and sand pill (#f6f4ef) are the only two pill variants
 - Don't use warm reds (#ff2b3a) for anything beyond destructive/error states; the warm accent slot belongs to #ff3e00
@@ -233,7 +233,7 @@ The signature border technique: 1px inset box-shadow in #f2f0ed creates an inter
 
 ## Imagery
 
-Illustration is the primary visual language: hand-drawn cartoon mascots (flower with square face, smiling green blob, yellow triangle character, orange cloud, cat) with dot eyes and stick limbs, rendered in flat fills from the accent palette (sky blue #64c6ff, sun yellow #ffcd6c, grass green #00c978, ember orange #ff3e00, coral pink #ff58ae). Scattered confetti shapes (coins, stars, hearts, gears, leaves, lock icons, QR markers) fill the negative space around them. All illustration strokes are #343433 at thin weight. Mascots use generous organic radii (40-72px). The illustrations are full-bleed on the left and right of the hero, then appear as smaller accents inside cards throughout the rest of the page. Photography is absent; phone mockups in the lower section show dark iOS UI screenshots. Icon style is solid filled circles in saturated brand colors, mono-weight.
+Illustration is the primary visual language, and it is heavy-stroke line art — not flat cartoon fills. The mark is a curious donkey (`burro`) in profile emerging from an open book, with long asymmetric ears and an orange ribbon marking the page, held inside an oldschool roundel. Drawing is built from thick, confident contours in ink black (#121212) over paper cream (#fbfaf9); the seal ring and page rules are stone border (#e5d5c3) and the ribbon is ember orange (#ff3e00). Weight lives in the stroke, not in the fill: shapes read as engraved or woodcut, never as sticker-flat mascots with dot eyes and stick limbs. The canonical artwork ships in `brand/` (`logo.svg`, `logo-icon.svg`, `wordmark.svg`, `favicon.svg`, plus `brand/png/` at 16-1024px) and is vector, font-independent, and not to be redrawn ad hoc — use the shipped file. Sizing follows `brand/README.md`: the simplified favicon portrait from 16 to 48px, the full mascot from 64px, the horizontal signature at 320px wide or more, always with clear space of 10% of the symbol width. On dark ground use the inverse variants so the ears stay readable. Illustration stays out of the editor, the chat and the suggestion review; it belongs to empty states, public covers and the brand signature. The accent fills (sky blue #64c6ff, sun yellow #ffcd6c, grass green #00c978, coral pink #ff58ae) are for covers and decorative panels only and never carry status meaning. Photography is absent. Icon style in the product chrome is mono-weight line, matching the mark's stroke logic.
 
 ## Layout
 
@@ -296,7 +296,7 @@ Quick Color Reference:
   --color-alert-red: #ff2b3a;
 
   /* Typography — Font Families */
-  --font-family: 'Family', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Typography — Scale */
@@ -416,7 +416,7 @@ Quick Color Reference:
   --color-alert-red: #ff2b3a;
 
   /* Typography */
-  --font-family: 'Family', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Typography — Scale */

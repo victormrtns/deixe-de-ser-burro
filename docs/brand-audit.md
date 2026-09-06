@@ -1,242 +1,293 @@
-# Auditoria de refinamento visual — Entrelinhas × marca
+# Auditoria de refinamento visual — deixedeserburro
 
-Branch: `feat/brand-visual-audit` · worktree `wt-brand` · data: 2026-09-05
+Branch: `feat/brand-visual-audit` · worktree `wt-brand` · duas rodadas (2026-09-05)
 
 ---
 
-## 1. Reconciliação das três fontes de verdade
+## 1. Reconciliação — **corrigida por decisão do autor**
 
-Existem três documentos que descrevem a identidade e eles **discordam**. Veredito por camada:
+> A rodada 1 desta auditoria concluiu que `DESIGN.md` vencia o contrato de tokens. **Essa conclusão foi revertida.**
 
-| Camada | Vence | Por quê |
+| Camada | Vence | Nota |
 |---|---|---|
-| **Contrato de tokens** (nomes, valores, geometria) | **`DESIGN.md`** | É o único que já está implementado em `frontend/src/styles/tokens.css`, é referenciado pelo `UX-CONTRACT.md` (linha do mapa canônico: "Scrollbar → source of truth `DESIGN.md`") e pelo `brand/README.md` ("As cores seguem os tokens de `frontend/src/styles/tokens.css`"). Trocar por `design.md` significaria renomear todos os tokens do produto por zero ganho. |
-| **Tipografia de display** | **`DESIGN.md` (Bricolage Grotesque)** | Desempate feito pelos ativos reais: `brand/README.md` diz explicitamente que o wordmark usa **"Bricolage Grotesque, peso 400 em `deixedeser` e 750 em `burro`"**. A `Family` do `design.md` é proprietária, não está instalada e não é distribuível. `design.md` inclusive já prevê substituto. Bricolage não é um *fallback*: é a face da marca impressa nos arquivos finais. |
-| **Linguagem visual e regras de elevação/forma** | **`design.md`** | É o documento mais detalhado e mais recente sobre *como* a superfície deve parecer: borda interna hairline no lugar de sombra, planura estrita, raios nomeados, escala tipográfica, gaps de seção. `DESIGN.md` diz as mesmas coisas em versão resumida — não há conflito real, só granularidade. |
-| **Ativos e nome da marca** | **`brand/`** | São os arquivos que efetivamente vão para produção. Vetoriais, independentes de fonte, com paleta declarada. |
+| **Cor, tipografia e linguagem visual** | **`design.md`** | Decisão do autor (2026-09-05). É a paleta canônica do produto e é ela que está em `tokens.css`. |
+| **Ativos** | **`brand/`** | Arquivos vetoriais finais. `brand/README.md` manda no dimensionamento e no uso. |
+| **`DESIGN.md`** | **Superado** | Não deletado. Recebeu um aviso no topo para ninguém implementar a partir dele. |
 
-**Conflitos que NÃO devem ser dissolvidos em silêncio** (viram decisões abertas na seção 5):
+**Nome do produto: `deixedeserburro`.** "Entrelinhas" está morto. Com isso, o conflito de duas marcas na mesma linha — que na rodada 1 impedia o uso do wordmark — deixou de existir.
 
-1. `design.md` chama a face de display de `Family`; `DESIGN.md` e `brand/` dizem `Bricolage Grotesque`.
-2. `DESIGN.md` tem três cores que `design.md` não tem: `success #007a4d`, `danger #c91d2e`, `textMuted #6f6d69`. Elas **são necessárias** — `design.md` não oferece um verde/vermelho de status com contraste AA sobre papel creme (`#00c978` e `#ff2b3a` não passam em texto). Mantidas.
-3. O produto se chama **Entrelinhas**; a marca em `brand/` se chama **deixedeserburro**. Não é divergência de estilo, é divergência de nome.
-4. A paleta ilustrativa de `design.md` (mascotes storybook, confete, `#64c6ff`, `#ff58ae`, `#9f4fff`…) descreve uma *landing page de carteira cripto*, não este produto. `DESIGN.md` restringe corretamente: "cores ilustrativas adicionais pertencem somente a capas e estados vazios". Seguido.
+### O problema de status, resolvido dentro do `design.md`
 
-**Resumo operacional:** `DESIGN.md` é o contrato; `design.md` é o manual de execução visual; `brand/` é o ativo. Onde os três se cruzam, `brand/` decide.
+A rodada 1 argumentou que `success`/`danger` precisavam vir do `DESIGN.md` porque `design.md` não tem verde/vermelho de status com contraste AA. O argumento estava errado — a saída não era importar cor de fora, era **parar de usar status como texto colorido**.
 
----
+`design.md` já diz, nas próprias linhas dos tokens, que grass-green, mint e alert-red são *"supporting accent, not a status color"* e que mint/honey/alert-red são *"wash for highlight backgrounds"*. E descreve o componente **Status Badge Pill**: pill 9999px, fundo no acento, texto escuro. Ou seja, o padrão do sistema é **o acento carrega o fundo; o texto vai em tinta escura**.
 
-## 2. Inventário dos tokens
+Medições feitas (WCAG 2.x, fundo creme `#fbfaf9`):
 
-`frontend/src/styles/tokens.css` tinha 24 tokens. Todos os 13 tokens de cor estavam em uso. Nenhum token órfão.
-
-**Um token era usado sem existir:**
-
-- `--shadow-raised` — consumido em `public-site.css:7` (`.published-book>a:hover`) e **nunca declarado**. O hover do cartão de livro publicado era CSS morto: a transição `box-shadow .18s ease` animava para `initial`. Corrigido.
-
----
-
-## 3. Tabela de lacunas
-
-Severidade: **A** = contradiz a marca de forma visível · **B** = bypassa o sistema de tokens · **C** = ruído / dívida.
-
-### 3.1 Ativos da marca — a lacuna real
-
-| # | Onde | Violação | Sev | Status |
-|---|---|---|---|---|
-| 1 | `frontend/index.html` | Zero `<link rel="icon">`. A aba do navegador mostrava o globo padrão do Vite. | **A** | **Corrigido** |
-| 2 | `frontend/index.html` | Sem `apple-touch-icon`. `brand/png/icon-180.png` existe e não era usado. | **A** | **Corrigido** |
-| 3 | `frontend/public/` | Continha apenas `design-review/`. **Nenhum dos 17 arquivos de `brand/` era referenciado em lugar algum do app.** | **A** | **Corrigido** (favicon, .ico, apple-touch-icon, logo-icon) |
-| 4 | `app.css:1` `.brand-mark` | Uma **marca concorrente desenhada em CSS**: três barras inclinadas em tinta + laranja, `border-radius:4px 4px 1px 1px`. Não é o burro. Além disso já era CSS morto (nenhum `className="brand-mark"` no código). | **A** | **Corrigido** (removida, substituída pelo mascote real) |
-| 5 | `LibraryPage.tsx:22` | Header privado renderizava `<span className="brand">Entrelinhas</span>` — só texto, sem símbolo. | **A** | **Corrigido** |
-| 6 | `PublicReadingShell.tsx:7` | Header público idem — a superfície voltada ao leitor não tinha marca nenhuma. | **A** | **Corrigido** |
-| 7 | `frontend/index.html` | Sem `manifest.webmanifest` e sem `og:image`. | **C** | **Adiado** — ver §4 |
-
-### 3.2 Elevação
-
-| # | Onde | Violação | Sev | Status |
-|---|---|---|---|---|
-| 8 | `tokens.css` `--shadow-overlay` | Era `0 24px 80px rgb(18 18 18 / 18%)`. `design.md` proíbe sombra acima de `rgba(0,0,0,0.04)` fora de overlays e fixa o teto de overlay em `rgba(0,0,0,0.15) 0 0 24px 0`. Offset de 24px + blur de 80px + 18% é "cartão flutuante genérico", explicitamente proibido em `DESIGN.md`. Afetava `.dialog` e `.toast`. | **A** | **Corrigido** → `0 0 24px 0 rgb(0 0 0 / 15%)` |
-| 9 | `public-site.css:7` | `var(--shadow-raised)` indefinido. | **B** | **Corrigido** → declarado como o "Subtle Drop on Cards" do `design.md`: `0 1px 6px 0 rgb(0 0 0/4%), 0 0 24px 0 rgb(0 0 0/5%)` |
-| 10 | `app.css:5` `.detail-cover` | `box-shadow:inset 4px 0 rgb(18 18 18 / 8%)` | — | **Conforme.** É `inset`, simula a lombada do livro. `design.md` só proíbe *drop* shadows. |
-
-Auditadas 14 declarações de `box-shadow` no total. As demais são `var(--shadow-surface)` (a hairline inset canônica) ou anéis de 1px — todas conformes.
-
-### 3.3 Gradientes
-
-| # | Resultado |
-|---|---|
-| 11 | `grep -riE "gradient" src/` → **0 ocorrências**. Nenhuma violação. |
-
-### 3.4 Cor — literais que bypassavam os tokens
-
-18 literais hexadecimais fora de `tokens.css`. Todos eliminados.
-
-| # | Onde | Literal | Sev | Status |
-|---|---|---|---|---|
-| 12 | `globals.css:75` `::selection` | `#ffdfd2` | B | → `--color-annotation-wash` |
-| 13 | `ui.css:34` `.button--primary:hover` | `#2a2a29` | B | → `--color-ink-hover` |
-| 14 | `ui.css:40` `.button--danger:hover` | `#a91423` | B | → `--color-danger-hover` |
-| 15 | `app.css:2,3,5,8` (4×) | `#ffdfd2` (avatar do assistente, ícone de estado vazio, marca do login, seleção) | B | → `--color-annotation-wash` |
-| 16 | `app.css:2,5,8` (3×) | `#b8e0ff` (capa de livro, painel do login) | B | → `--color-cover-blue` |
-| 17 | `app.css:2` | `#ffb399` | B | → `--color-cover-orange` |
-| 18 | `app.css:2` | `#a7e3c7` | B | → `--color-cover-green` |
-| 19 | `app.css:3` `.paper-note` | `#fff4bd` | B | → `--color-note` |
-| 20 | `app.css:5` `.writing-row:hover` | `#fffdfb` — quase-canvas inventado | B | → `var(--color-canvas)` |
-| 21 | `app.css:5` `.status-chip` | `#fff4d1` / `#755000` | B | → `--color-pending-wash` / `--color-pending-ink` |
-| 22 | `app.css:5` `.status-chip--published` | `#dff4e9` | B | → `--color-success-wash` |
-| 23 | `suggestions.css:1` `del`/`ins` | `#c91d2e12` / `#007a4d12` — duplicavam `--color-danger` e `--color-success` em hex de 8 dígitos | B | → `color-mix(in srgb, var(--color-*) 7%, transparent)` |
-| 24 | `tokens.css` scrollbar | `#a8a39c`, `#77726c` — cinzas fora da paleta | C | **Mantido.** Geometria de scrollbar é contrato documentado no `UX-CONTRACT.md`; mexer aqui é mudança de comportamento, não de marca. |
-
-**Cores em uso que não estão na paleta do `design.md`:** as cores de capa (`#b8e0ff`, `#ffb399`, `#a7e3c7`, `#fff4bd`, `#ffdfd2`) são lavagens pastel dos acentos do `design.md`. `DESIGN.md` autoriza explicitamente: *"cores ilustrativas adicionais pertencem somente a capas e estados vazios"*. Decisão: **tokenizar, não repintar.** Elas ficam nomeadas e confinadas ao seu papel; nenhuma virou status nem preenchimento de botão.
-
-Verificação: `grep -rnoE "#[0-9a-fA-F]{3,8}" src --include=*.css | grep -v tokens.css` → **vazio**. Nenhum literal de cor em `.tsx`.
-
-### 3.5 Raio
-
-Escala: 6 / 10 / 12 / 9999. `design.md` acrescenta 32px para pílulas de botão.
-
-| # | Onde | Antes | Sev | Status |
-|---|---|---|---|---|
-| 25 | `ui.css:69` `.dialog` | `16px` | B | → `var(--radius-card)` (10px) |
-| 26 | `app.css:3` `.assistant>footer` | `18px` | B | → `var(--radius-control)` (12px) |
-| 27 | `app.css:3` `.workspace-nav>button` | `8px` | B | → `var(--radius-small)` (6px) |
-| 28 | `workspace.css:1` `nav>button` | `8px` | B | → `var(--radius-small)` |
-| 29 | `workspace-sovereign.css:5` `.workspace-header-actions>button` | `7px` | B | → `var(--radius-small)` |
-| 30 | `app.css:2,5` `.writing-number`, `.book-cover`, `.detail-cover` | `4px 9px 9px 4px`, `3px 8px 8px 3px`, `5px 16px 16px 5px` | C | **Mantido deliberadamente.** São lombadas de livro — geometria ilustrativa assimétrica. `DESIGN.md`: *"Capas e ilustrações podem usar formas orgânicas, mas o chrome do produto permanece geométrico."* Normalizar destruiria a metáfora. |
-| 31 | `app.css:3` `.messages p` | `13px 13px 13px 3px` | C | **Mantido.** Rabo de balão de conversa. Além disso é CSS morto (ver §3.7). |
-
-Botões usam `--radius-pill` (9999px), o que atende à pílula de `design.md` em qualquer altura. **`.button` não recebeu variante "sand" (`#f6f4ef`)** — ver decisão aberta 4.
-
-### 3.6 Tipografia
-
-| # | Item | Resultado |
+| Combinação | Razão | |
 |---|---|---|
-| 32 | A face de display está ligada? | **Sim.** `globals.css:1` importa `@fontsource-variable/bricolage-grotesque`; `--font-display` resolve para `'Bricolage Grotesque Variable'`. **Não é uma lacuna** — a suspeita da tarefa não se confirma. |
-| 33 | Inter em tamanhos de display? | **Não.** Todos os `h1`/`h2` grandes (`.library-hero h1` 48–82px, `.draft h1` 44–68px, `.landing-intro h1` 52–94px, `.public-article h1` 48–82px, `.prose h1..h3`) já usam `var(--font-display)`. Conforme. |
-| 34 | Tracking negativo em display | Presente e coerente: −0.03em a −0.065em conforme o tamanho. `design.md` pede −0.031em em 68px; o produto usa mais aperto (−0.055em) — é escolha editorial deliberada, dentro do espírito. Não alterado. |
-| 35 | Entrelinha de texto corrido | `body` 1.55, `.prose` 1.76, `.draft p` 1.72. `DESIGN.md` pede 1.55–1.7. `.prose` a 1.76 estoura por 0.06. | **C, adiado** — dentro do ruído, mexer é decisão editorial. |
-| 36 | Tamanho de corpo | `body` 15px. `design.md` pede 17px, `DESIGN.md` aceita "15–17px para interface". Conforme ao contrato vigente. Não alterado. |
-| 37 | `font-weight:650` / `580` / `560` / `620` | Pesos não-canônicos, só possíveis por a fonte ser variável. `design.md` lista 400/500/600. | **C, mantido** — Bricolage é variável, os pesos renderizam; normalizar é redesign tipográfico. |
+| Grass Green `#00c978` como **texto** sobre creme | 2,09:1 | reprova |
+| Gold `#d48f00` como **texto** sobre creme | 2,61:1 | reprova |
+| Alert Red `#ff2b3a` como **texto** sobre creme | 3,56:1 | reprova em texto normal |
+| Branco sobre Alert Red (botão destrutivo anterior) | 3,71:1 | reprova |
+| **Ink `#121212` sobre Alert Red** | **5,05:1** | passa |
+| **Ink `#121212` sobre Mint `#00ca48`** | **8,51:1** | passa |
+| **Ink `#121212` sobre Honey `#ffbb26`** | **11,05:1** | passa |
+| **Ink `#121212` sobre Sun Yellow `#ffcd6c`** | **12,67:1** | passa |
+| **Ink `#121212` sobre Sky Blue `#64c6ff`** | **9,87:1** | passa |
 
-### 3.7 Espaçamento e dívida estrutural
+O padrão wash+tinta resolve **todos** os casos de status com folga. Nenhuma cor foi inventada e nada foi importado do `DESIGN.md`.
 
-| # | Item | Sev | Status |
+---
+
+## 2. `tokens.css` — o que mudou
+
+Só **três** tokens de cor divergiam de fato do `design.md`. Os outros dez já coincidiam exatamente (canvas, surface, stone, ink, charcoal, border, link, ember, focus).
+
+| Token | Antes | Agora | Papel em `design.md` |
 |---|---|---|---|
-| 38 | ~120 declarações de espaçamento fora da base 4px (`gap:9px`, `padding:25px`, `gap:22px`, `padding:14px 12px 11px`, `height:58px`, `gap:62px`, `padding:0 44px`…) | C | **Adiado.** Fechar isso é reescrever o ritmo de todas as telas — explicitamente fora do escopo ("não redesenhe telas"). O ritmo ímpar parece intencional (sensação de traço à mão). |
-| 39 | `design.md` pede gap de seção de 80–120px; o produto usa 68–96px | C | **Adiado.** Decisão de densidade, não de marca. |
-| 40 | **`app.css` (16 KB, o maior arquivo de CSS) está em grande parte morto.** É o protótipo do shell antigo. ~35 classes definidas nunca aparecem em nenhum `className`: `.workspace-shell`, `.workspace-nav`, `.assistant`, `.messages`, `.user-message`, `.document-scroll`, `.margin-rail`, `.draft`, `.paper-note`, `.mini-rail`, `.avatar`, `.budget`, `.open-icon`, `.writing-card`, `.writing-number`, `.context`, `.nav-label`, `.public`, `.deck`, `.routed-public`, `.back`, `.accepted`, `.prompt`, `.source`, `.lede`, `.orange`, `.green`… As telas reais são servidas por `workspace.css` e `public-site.css`. | **C** | **Adiado e sinalizado.** Achado grande, mas "não reestruture a arquitetura de CSS". Estimativa: ~8 KB deletáveis. Merece um PR próprio, com varredura de `className` dinâmico antes de apagar. |
+| `--color-text-muted` | `#6f6d69` (fora da paleta) | `#474645` | Body Brown. Contraste sobe de 4,95:1 → **9,03:1**. |
+| `--color-success` | `#007a4d` (fora da paleta) | `#00ca48` | Mint — agora **fundo**, nunca texto |
+| `--color-danger` | `#c91d2e` (fora da paleta) | `#ff2b3a` | Alert Red — agora **fundo/borda**, nunca texto |
+| `--color-pending` | `#d48f00` | `#ffbb26` | Honey. `#d48f00` (Gold) é papel de *texto*; o produto só usa este token como preenchimento, e o Status Badge Pill do `design.md` especifica honey. |
+
+**Adicionado:** `--color-status-ink: #121212` (a tinta que vai sobre qualquer acento de status).
+
+**Removidos** — a lavagem virou desnecessária quando o acento passou a ser o próprio fundo: `--color-pending-wash`, `--color-pending-ink`, `--color-success-wash`.
+
+**Cores ilustrativas remapeadas para os fills nomeados do `design.md`:**
+
+| Antes (inventado na rodada 1) | Agora |
+|---|---|
+| `--color-cover-blue: #b8e0ff` | `--color-illustration-sky: #64c6ff` (Sky Blue) |
+| `--color-note: #fff4bd` | `--color-illustration-sun: #ffcd6c` (Sun Yellow) |
+| `--color-cover-orange: #ffb399`, `--color-cover-green: #a7e3c7` | **removidos** — só existiam nas regras `.book-cover.orange` / `.book-cover.green`, ambas código morto (só `.blue` é usada no TSX). As regras foram apagadas junto. |
+
+`--color-annotation-wash` deixou de ser um hex avulso (`#ffdfd2`, sem equivalente no `design.md`) e passou a ser derivado da própria paleta: `color-mix(in srgb, var(--color-annotation) 18%, var(--color-canvas))`.
+
+Os dois hovers (`--color-ink-hover`, `--color-danger-hover`) também deixaram de ser hexes inventados e viraram `color-mix` sobre a paleta. `#a91423` estava órfão de qualquer forma — era derivado do vermelho antigo.
+
+**Resultado:** `tokens.css` contém hoje **apenas valores do `design.md`**, mais dois cinzas de scrollbar (ver §6.2).
+Zero literais hexadecimais em qualquer outro `.css`; zero literais de cor em `.tsx`.
+
+### Os call sites de status
+
+| Arquivo | Antes | Agora |
+|---|---|---|
+| `ui.css` `.button--danger` | `background: danger; color: white` (3,71:1) | `color: var(--color-status-ink)` (5,05:1) |
+| `ui.css` `.field__error` | `color: var(--color-danger)` | `color: var(--color-ink)` — a borda vermelha do `aria-invalid` já carrega a cor |
+| `app.css` `.status-chip` | wash bege + tinta `#755000` | `background: var(--color-pending); color: var(--color-status-ink)` |
+| `app.css` `.status-chip--published` | wash verde + texto `#007a4d` | `background: var(--color-success); color: var(--color-status-ink)` |
+| `chat.css` `.chat-error` | `color: var(--color-danger)`, sem outro portador | barra lateral vermelha de 3px + texto em tinta — **reaproveita o padrão que `.recorder [role=alert]` já usava** |
+| `chat.css` `.chat-stop` | `color: var(--color-danger)` | texto em tinta; o `inset … 1px danger` que já existia carrega a cor |
+| `audio.css` `[role=alert]` | `color: var(--color-danger)` | texto em tinta; a barra vermelha já existia |
+| `workspace.css` `.workspace-save--failed` | `color: var(--color-danger)` | texto em tinta; o ponto vermelho `:before` já existia |
+
+Verificação: `grep -rnoE "(^|[;{ ])color:\s*var\(--color-(danger|success|pending)\)" src --include=*.css` → **vazio**. Todos os 21 usos restantes desses três tokens são `background`, `border-color`, `border-left` ou `text-decoration-color`.
 
 ---
 
-## 4. O que foi mudado
+## 3. Renomeação — alcance
 
-**11 arquivos modificados, 4 ativos adicionados. Nenhuma dependência nova, nenhum componente novo, nenhuma tela redesenhada.**
+`grep -rn "Entrelinhas"` no worktree: **77 ocorrências em 37 arquivos**.
 
-`frontend/src/styles/tokens.css` — 10 tokens de cor + 1 de sombra adicionados; `--shadow-overlay` reduzido ao teto do `design.md`. **Toda a consolidação de cor foi feita aqui**, não nos 18 pontos de chamada.
+**Renomeadas nesta rodada: 25 ocorrências em 17 arquivos, todas no `frontend/`.**
 
-`frontend/index.html` — três `<link>` de ícone.
+| Grupo | Arquivos |
+|---|---|
+| Títulos de documento | `index.html`, `SignInPage`, `LibraryPage`, `PublicLibraryPage`, `PublicArticlePage`, `PublicBookPage`, `PublicArticlesPage`, `PublicBooksPage`, `PublicAboutPage`, `RouteErrorPage` (×2) |
+| `aria-label` de `<main>` | `router.tsx`, `SignInPage`, `LibraryPage`, `BookDetailPage`, `RouteErrorPage` (×2), `PublicReadingShell` |
+| Texto de página | `PublicAboutPage` ("… é uma publicação independente…"), `PublishedBookCard` (marca impressa na capa) |
+| Testes que asseveram esses textos | `router.test.tsx` (×5), `smoke.test.tsx` (×2) |
+| Artefato estático | `public/design-review/index.html` (`<title>`) |
 
-`frontend/public/favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `brand/logo-icon.svg` — cópias de `brand/`. (Cópia, não import: o Vite não serve arquivos acima da raiz sem `fs.allow`, e favicon é ativo estático por natureza. Custo: duplicação. `brand/README.md` continua sendo a origem.)
+Além da string literal, o trocadilho do painel decorativo do login foi refeito: `<span>Entre</span><span>linhas</span>` → `<span>deixedeser</span><span>burro</span>`, seguindo a quebra que o `brand/README.md` descreve (peso 400 em `deixedeser`, 750 em `burro`).
 
-`frontend/src/features/library/LibraryPage.tsx` e `frontend/src/public-site/PublicReadingShell.tsx` — `<img src="/brand/logo-icon.svg" alt="" />` ao lado do nome nos dois headers. `alt=""` porque o texto adjacente já nomeia a marca; o mascote é decorativo na árvore de acessibilidade.
-
-`globals.css`, `ui.css`, `app.css`, `workspace.css`, `workspace-sovereign.css`, `suggestions.css`, `public-site.css` — substituição de literais por tokens e correção de raios.
-
-### O que foi deixado em paz, de propósito
-
-- **A paleta `design.md` de mascotes storybook.** O produto não é uma landing de carteira cripto. `DESIGN.md` já restringe corretamente.
-- **Os raios de lombada de livro** (§3.5 #30) — geometria ilustrativa, não chrome.
-- **Os ~120 espaçamentos fora da grade** (§3.7 #38) — fechar isso é redesenhar.
-- **Os 8 KB de CSS morto em `app.css`** (§3.7 #40) — PR próprio.
-- **As cores da scrollbar** — contrato de comportamento, não de marca.
-- **Os pesos de fonte não-canônicos** — redesign tipográfico.
-- **Warnings de lint pré-existentes** (15, todos `react-refresh` / `exhaustive-deps`) — nenhum em arquivo tocado por esta auditoria.
+**Não tocado, conforme instruído** — ver o apêndice em §7.
 
 ---
 
-## 5. Decisões abertas — precisam da chamada do autor
+## 4. Wordmark e assinatura
 
-### 5.1 `Family` ou `Bricolage Grotesque`?
-**Recomendação: Bricolage, e corrigir o `design.md`.** `Family` é proprietária, não está instalada, não é distribuível, e o wordmark em `brand/` **já está desenhado em Bricolage** (README, §Paleta). Manter `design.md` dizendo `Family` garante que alguém no futuro vai tentar comprar/instalar a fonte errada. Ação sugerida: editar `design.md` trocando `Family` → `Bricolage Grotesque` e removendo a linha "Substitute: Druk Wide Medium". *Não executado — mexer no documento de marca é decisão sua.*
+Com o nome resolvido, `wordmark.svg` e `logo.svg` entraram em uso.
 
-### 5.2 O produto se chama "Entrelinhas" ou "deixedeserburro"?
-Esta é a divergência mais séria e **bloqueia o uso do wordmark**. `brand/wordmark.svg` e `brand/logo.svg` contêm o texto **"deixedeserburro"** em contornos. O app diz "Entrelinhas" em todos os títulos de rota, no `UX-CONTRACT.md` e nos testes.
+Antes disso, uma correção da rodada 1: eu tinha usado `logo-icon.svg` a 26px e 34px. O `brand/README.md` diz *"Use o favicon entre 16 e 48 px e o mascote completo a partir de 64 px"* — as duas aplicações **violavam a orientação da própria marca**. Corrigido.
 
-Por isso wirei apenas o **`logo-icon.svg` (o mascote, sem texto)** e o favicon — são neutros quanto ao nome. **Não coloquei `logo.svg` nem `wordmark.svg` em lugar nenhum**, porque isso faria a interface exibir dois nomes de marca diferentes na mesma linha.
+| Lugar | Aplicação |
+|---|---|
+| Nav do studio (`LibraryPage`) | `favicon.svg` a 30px (`alt=""`, decorativo) + `wordmark.svg` (`alt="deixedeserburro"`, **conteúdo**) |
+| Cabeçalho público (`PublicReadingShell`) | `favicon.svg` a 38px (`alt=""`) + `wordmark.svg` (`alt="deixedeserburro"`), preservando o subtítulo "notas à margem" |
+| Sign-in (`SignInPage`) | `logo.svg` — a assinatura horizontal completa — a 340px de largura. É o **único lugar do produto com espaço para os ≥320px que o README pede**. |
 
-**Recomendação:** decida o nome antes de qualquer outra coisa visual. Se for "deixedeserburro", é uma renomeação de produto (rotas, `<title>`, `UX-CONTRACT.md`, testes) e aí o wordmark entra nos dois headers. Se for "Entrelinhas", o `brand/` precisa de um wordmark redesenhado e o `brand/README.md` precisa de correção. Terceira via: "deixedeserburro" é a marca-casa e "Entrelinhas" é o produto — nesse caso o mascote no header já está certo e nada mais muda.
+`public/brand/logo-icon.svg` foi removido (nenhuma aplicação restante cai na faixa ≥64px). Nos headers a marca é o favicon (dentro da faixa 16–48px) e o nome é o wordmark; juntos reconstituem a assinatura horizontal na escala do cabeçalho.
 
-### 5.3 O mascote burro combina com o `design.md`?
-`design.md` descreve "mascotes cartoon storybook com olhos de pontinho e membros de palito" em preenchimentos chapados. O burro de `brand/` é **line-art de traço pesado, roundel old-school** — linguagem oposta (contorno vs. preenchimento). Um dos dois está errado. **Recomendação:** o `brand/` vence (é o ativo produzido); reescrever a seção *Imagery* do `design.md` para descrever line-art de traço pesado em vez de mascotes chapados. *Não executado.*
-
-### 5.4 Falta a variante "sand pill" de botão
-`design.md` define exatamente duas pílulas: escura `#121212` e areia `#f6f4ef`. O produto tem quatro variantes (`primary`/`neutral`/`ghost`/`danger`) e nenhuma é areia — `neutral` é branco com hairline. **Recomendação: não adicionar.** Quatro variantes já cobrem o espaço; `#f6f4ef` sequer existe nos tokens, e `--color-surface-muted` (`#f2f0ed`) é próximo o bastante. Só vale mexer se você quiser a leitura tonal específica do par escuro+areia lado a lado. Registro aqui porque é divergência explícita da marca.
-
-### 5.5 Sem `manifest.webmanifest`
-Adiado por YAGNI — não há requisito de PWA/instalação. `brand/png/` tem `icon-192` e `icon-512` prontos para o dia em que houver. Um manifesto custa ~8 linhas quando for pedido.
+O `alt` do wordmark é o nome da marca porque **o wordmark é conteúdo, não decoração** — é a única coisa que nomeia o produto ali. O mascote ao lado leva `alt=""` para não duplicar o nome no leitor de tela.
 
 ---
 
-## 6. Verificação
+## 5. `design.md` e `DESIGN.md`
 
-Saída real desta branch. Sem verificação em navegador — ver §6.2.
+**`design.md`** (agora canônico) — corrigidas as duas incoerências, e só elas:
+
+1. **`Family` → `Bricolage Grotesque`** na tabela de tipografia (título da entrada, campo *Substitute*, campo *Role*), nos dois Do's/Don'ts que citavam a face, e no `--font-family` do Quick Start. O campo *Substitute* agora registra o motivo: os ativos de `brand/` estão desenhados em Bricolage (peso 400 em `deixedeser`, 750 em `burro`), e `Family` é proprietária e não instalada.
+2. **Seção *Imagery* reescrita.** Descrevia mascotes cartoon chapados com olhos de pontinho e membros de palito, traço fino — o oposto do ativo real. Agora descreve o que `brand/` de fato é: line-art de traço pesado, o burro de perfil saindo de um livro aberto, fita laranja marcando a página, roundel oldschool; peso no contorno e não no preenchimento; os arquivos canônicos e as regras de dimensionamento do `brand/README.md`; e a restrição de que os fills de acento servem a capas e painéis, nunca a status.
+
+**`DESIGN.md`** — nota `[!IMPORTANT]` no topo dizendo que está superado, que `design.md` é canônico para cor/tipografia/linguagem visual, apontando os pontos exatos em que ele diverge (`success`, `danger`, `textMuted`) e registrando que o padrão de status correto é fundo no acento + texto escuro. Mantido como registro histórico.
+
+---
+
+## 6. Divergências que sobraram
+
+### 6.1 Status: nenhuma
+
+Todo caso de status fechou dentro do `design.md` com o padrão wash+tinta. Não sobrou nenhum ponto precisando de texto colorido sem cor AA disponível. **Nada a decidir aqui.**
+
+### 6.2 Papéis que o `design.md` simplesmente não cobre
+
+Não são divergências de valor — são lacunas do documento. Deixei como está e registro:
+
+- **Face monoespaçada.** `design.md` não define nenhuma. O produto precisa de mono (editor Markdown, micro-rótulos, metadados). `--font-code` continua `IBM Plex Mono`, herdado do `DESIGN.md`.
+- **Cinzas de scrollbar** (`#a8a39c`, `#77726c`). Sem papel correspondente no `design.md`, e o `UX-CONTRACT.md` trata scrollbar como contrato de comportamento. Preservados.
+- **Estados de hover.** `design.md` é uma referência estática, não especifica hover. Os dois hovers agora são `color-mix` derivado da paleta, então não introduzem cor nova.
+
+### 6.3 Contraste AA na própria paleta do `design.md` — **precisa da sua chamada**
+
+Duas cores canônicas reprovam AA como texto de tamanho normal sobre creme, e **nenhuma delas é status**, então o padrão wash não as resolve:
+
+| Token | Uso | Contraste sobre `#fbfaf9` |
+|---|---|---|
+| `--color-link` `#0086fc` | links inline, `.route-error a`, `.workspace-save button`, `.publication-status a` | **3,46:1** — reprova AA (mínimo 4,5:1) |
+| `--color-annotation` `#ff3e00` | eyebrows, kickers, `.row-index`, `.article-meta`, `.margin-rail` | **3,39:1** — reprova AA |
+
+Ambas são pré-existentes, não regressão desta rodada, e ambas estão no `design.md` exatamente nesses papéis (Link Blue: *"inline links"*; Ember Orange: *"inline links and feature callouts"*). **Não inventei substituto.** As opções são suas:
+
+- aceitar como está e assumir a não-conformidade;
+- restringir as duas a texto ≥18,66px/bold, onde 3:1 basta (a maioria dos usos de ember já é micro-rótulo em caixa alta — mas micro-rótulo é *pequeno*, então isso não salva);
+- escurecer os dois valores no `design.md`, o que muda a paleta canônica;
+- manter a cor e adicionar sublinhado/peso como portador redundante, o que resolve "cor não opera sozinha" mas **não** resolve o contraste.
+
+O `test:a11y` não pega isto: a regra `color-contrast` do axe está desligada na suíte (`accessibility.test.tsx` linha 12).
+
+### 6.4 Corpo de texto a 15px vs. 17px no `design.md`
+
+`design.md` fixa `--text-body: 17px`; o produto usa 15px em `body`. Com `design.md` canônico para tipografia, isto é divergência real. **Não alterei** — mudar a base tipográfica reflui todas as telas, o que é redesenho e estava fora do escopo. Além disso `tokens.css` não tem tokens de tamanho de fonte, então não havia o que "reconciliar" no arquivo. Registro para uma decisão sua.
+
+### 6.5 Resíduos no `design.md` fora do escopo autorizado
+
+Duas linhas ainda carregam a origem do documento e contradizem a seção *Imagery* que reescrevi. Você disse para não tocar no resto, então não toquei:
+
+- linha 1: `# Family — Style Reference`;
+- linha 6, o parágrafo de visão geral: *"hand-drawn characters and scattered confetti shapes… the cartoon illustrations carry all the emotional weight"*.
+
+Recomendo uma passada curta trocando o título por `# deixedeserburro — Style Reference` e realinhando o parágrafo à nova *Imagery*. Não executado.
+
+---
+
+## 7. Apêndice — "Entrelinhas" fora do frontend (52 ocorrências, 20 arquivos)
+
+Não tocado, por instrução (`ia/` e `docs/` estão sendo editados por outros agentes; identificadores de infra não devem mudar aqui). Lista para uma passada separada:
+
+**Contrato (o mais urgente — ficou desatualizado no instante em que os títulos mudaram):**
+- `UX-CONTRACT.md` — 7 ocorrências, incluindo a **tabela de rotas e títulos inteira** (linhas 15–20), que agora descreve títulos que o frontend não emite mais.
+
+**Documentação e estudo:**
+- `ia/CONTEUDOS.md` (3), `ia/ROADMAP.md` (2), `ia/PARTE-1-CONVERSA-CONTEXTUAL.md` (3)
+- `docs/handoffs/current.md` (1)
+- `docs/superpowers/plans/…-public-landing-and-unified-conversation.md` (5), `…-visual-identity-frontend.md` (2), `…-backend-crud-infrastructure.md` (1)
+- `docs/superpowers/specs/…-contextual-ai-conversation-design.md` (4), `…-public-landing-and-unified-conversation-design.md` (3), `…-backend-crud-infrastructure-design.md` (1)
+- `DESIGN.md` (1, na visão geral — o título já foi ajustado junto com a nota de superado)
+- `.superpowers/brainstorm/…/landing-directions.html` (1)
+
+**Backend — inclui strings que chegam ao usuário/modelo:**
+- `backend/app/main.py:42` — `FastAPI(title="Entrelinhas API")` (aparece no OpenAPI/docs)
+- `backend/app/assistant/context.py:21` — **prompt do sistema**: *"Você é o assistente do Entrelinhas…"*
+- `backend/app/assistant/editorial.md:5` — `# Linha editorial do Entrelinhas`
+- `backend/tests/unit/test_assistant_context.py:143` e `test_openai_gateway.py:35` — asseveram essas strings
+- `backend/migrations/versions/0001_initial.py:1` — docstring (histórico, não renomear)
+
+**Infra — não renomear sem migração deliberada:**
+- `ops/cleanup.service:2`, `ops/cleanup.timer:2` — `Description=` de units systemd
+- Nome do pacote npm `entrelinhas-frontend` em `frontend/package.json`, `PUBLIC_ORIGIN`, nomes de container e de banco: **não verificados nem tocados**, conforme instruído.
+
+---
+
+## 8. Verificação
+
+Saída real, após todas as mudanças desta rodada.
 
 ```
 $ npm --prefix frontend run lint
 ✖ 15 problems (0 errors, 15 warnings)
-EXIT=0
 ```
-15 warnings, todos pré-existentes (`react-refresh/only-export-components` ×12, `react-hooks/exhaustive-deps` ×2, +1) em `Workspace.tsx`, `RecorderProvider.tsx`, `SuggestionProvider.tsx`, `SessionProvider.tsx`, `ChatProvider.tsx`, `WorkspaceProvider.tsx`, `router.tsx` — nenhum arquivo tocado por esta auditoria.
+Mesmas 15 warnings pré-existentes (`react-refresh/only-export-components` ×12, `react-hooks/exhaustive-deps` ×2, +1). Nenhuma em arquivo tocado.
 
 ```
 $ npm --prefix frontend run typecheck
 > tsc -b --pretty false
-EXIT=0
+(sem saída, exit 0)
 ```
 
 ```
 $ npm --prefix frontend run test:unit
  Test Files  16 passed (16)
       Tests  58 passed (58)
-   Duration  8.90s
-EXIT=0
+   Duration  6.58s
 ```
 
 ```
 $ npm --prefix frontend run build
-✓ built in 14.71s
+✓ built in 13.48s
 EXIT=0
+<title>deixedeserburro — Leituras que continuam</title>
+dist/favicon.svg  dist/brand/logo.svg  dist/brand/wordmark.svg
 ```
 Aviso pré-existente de chunk >500 kB (mermaid/katex/cytoscape), não relacionado.
-Ativos da marca confirmados em `dist/`: `favicon.svg`, `favicon.ico`, `apple-touch-icon.png`, `brand/logo-icon.svg`.
 
 ```
 $ npm --prefix frontend run verify:premium
 Premium static check: 79 arquivos, 0 violações.
-EXIT=0
 ```
 
 ```
 $ npm --prefix frontend run test:a11y
  Test Files  1 passed (1)
       Tests  2 passed (2)
-EXIT=0
+```
+Cobre `SignInPage` (que ganhou o `logo.svg` e o texto renomeado) e `PublicArticlePage` (que renderiza pelo `PublicReadingShell`, com o wordmark). Nenhuma violação séria ou crítica. **Ressalva importante:** a regra `color-contrast` está desligada nesta suíte, então ela **não** valida o padrão wash+tinta — o que valida são as medições da §1, feitas pela fórmula de luminância relativa da WCAG.
+
+Auditorias estáticas:
+```
+$ grep -rnoE "#[0-9a-fA-F]{3,8}" frontend/src --include=*.css | grep -v tokens.css
+(vazio)
+
+$ grep -rnoE "(^|[;{ ])color:\s*var\(--color-(danger|success|pending)\)" frontend/src --include=*.css
+(vazio)
+
+$ grep -rn "Entrelinhas" frontend/src frontend/index.html frontend/public
+(vazio)
 ```
 
-### 6.1 O que o `verify:premium` já cobre (e o que não)
+### Sem verificação em navegador
 
-`frontend/scripts/check-anti-patterns.mjs` verifica **apenas** `alert(`/`confirm(`/`prompt(`, `dangerouslySetInnerHTML`, mock no entrypoint de produção, `fetch` direto dentro de `features/`, e a string de orçamento fictício. **Não tem nenhuma regra visual** — não olha cor, sombra, raio nem gradiente, e nem sequer lê arquivos `.css` (o walk filtra `.ts|.tsx`). Nada nesta auditoria duplica esse gate.
-
-Se você quiser travar as regressões que este PR corrigiu, o gate mais barato seria estender esse mesmo script para varrer `.css` e reprovar: literal hexadecimal fora de `tokens.css`, `linear-gradient`/`radial-gradient`, e `border-radius` numérico fora de {6,10,12,9999}. Cerca de 10 linhas. **Não implementado** — adicionar um gate novo não foi pedido, e ele reprovaria hoje os raios de lombada de livro (§3.5 #30) sem uma lista de exceções.
-
-### 6.2 Verificação em navegador: não realizada
-
-Playwright lista os 8 testes normalmente, mas o Chromium **não inicia nesta máquina**:
-
+O Chromium não inicia nesta máquina:
 ```
-[pid=800853][err] .../chrome-headless-shell: error while loading shared libraries:
+chrome-headless-shell: error while loading shared libraries:
 libnspr4.so: cannot open shared object file: No such file or directory
 ```
+Tentado uma vez na rodada 1, sem workaround. **Nada neste documento foi verificado visualmente.** O wordmark, a assinatura no sign-in, o favicon e as novas cores de status **não foram vistos renderizados** — precisam da sua conferência ocular ou de uma máquina com `libnspr4`.
 
-Tentado uma vez, falhou, sem workaround. **Nenhuma afirmação neste documento foi verificada visualmente.** As mudanças de cor/raio/sombra foram verificadas por leitura estática, pelos 58 testes unitários (que compilam o CSS via `vitest css:true`) e pelo build. O favicon e o mascote nos headers **não foram vistos renderizados** — precisam de conferência ocular sua ou de uma máquina com `libnspr4` instalada.
+---
+
+## 9. O que continua deliberadamente intocado
+
+- **~120 espaçamentos fora da base 4px** — fechar é redesenhar.
+- **~8 KB de CSS morto em `app.css`** (≈35 classes do shell protótipo: `.workspace-shell`, `.assistant`, `.margin-rail`, `.draft`, `.paper-note`, `.mini-rail`, `.avatar`, `.budget`…). PR próprio, com varredura de `className` dinâmico antes de apagar. Nesta rodada só saíram `.book-cover.orange` e `.book-cover.green`, porque o único conteúdo delas era uma cor fora da paleta.
+- **Raios de lombada de livro** (`4px 9px 9px 4px` etc.) — geometria ilustrativa; `design.md` autoriza formas orgânicas em capas e ilustração.
+- **Pesos de fonte não canônicos** (560/580/620/650) — possíveis por a fonte ser variável; normalizar é redesenho tipográfico.
+- **Gate visual no `verify:premium`.** `check-anti-patterns.mjs` só varre `.ts|.tsx` procurando `alert(`/`dangerouslySetInnerHTML`/mock/fetch — **não tem regra visual e nem lê `.css`**. Nada aqui o duplica. Um gate que reprovasse hex fora de `tokens.css`, gradiente e raio fora de escala seria ~10 linhas no mesmo script, mas não foi pedido e exigiria lista de exceções para os raios de lombada.
+
+---
+
+## Histórico da rodada 1
+
+Fechado antes desta reconciliação, e ainda válido: `--shadow-overlay` reduzido de `0 24px 80px rgb(18 18 18/18%)` para o teto de overlay do `design.md`; `--shadow-raised` declarado (era consumido em `public-site.css` sem existir); favicon e `apple-touch-icon` ligados pela primeira vez; `.brand-mark` removida (uma marca concorrente desenhada em CSS — três barras inclinadas — que já era código morto); raios de chrome fora da escala (16/18/8/7px) normalizados; zero gradientes no codebase, confirmado.
