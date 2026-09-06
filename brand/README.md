@@ -1,6 +1,6 @@
 # Marca — deixedeserburro
 
-![Assinatura principal](logo.svg)
+![Assinatura principal](logo.png)
 
 Esta pasta contém somente a versão final da marca e suas aplicações. O mascote é um burro curioso com um livro aberto; a fita laranja marca a página.
 
@@ -8,7 +8,7 @@ Esta pasta contém somente a versão final da marca e suas aplicações. O masco
 
 | Arquivo | Uso |
 | --- | --- |
-| `logo.svg` / `logo.png` | Assinatura horizontal com mascote e nome. PNG com 1600 px de largura. |
+| `logo.svg` / `logo.png` | Assinatura horizontal com mascote e nome, 916×280. PNG com 1600 px de largura. Em Markdown do GitHub use o PNG: o sanitizador de SVG do GitHub come os contornos do nome e sobra só o mascote. No produto, use o SVG. |
 | `logo-icon.svg` / `logo-icon.png` | Mascote completo. PNG de 1024 × 1024 px. |
 | `wordmark.svg` / `wordmark.png` | Nome isolado, convertido em contornos. |
 | `logo-inverse.svg` / `logo-inverse.png` | Assinatura para fundo escuro. |

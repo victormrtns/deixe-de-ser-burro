@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/logo-inverse.svg">
-    <img src="brand/logo.svg" alt="deixedeserburro" width="560">
+    <source media="(prefers-color-scheme: dark)" srcset="brand/logo-inverse.png">
+    <img src="brand/logo.png" alt="deixedeserburro" width="560">
   </picture>
 </p>
 
