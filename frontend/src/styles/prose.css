@@ -4,7 +4,7 @@
   line-height: 1.76;
 }
 
-.prose > * { max-width: 68ch; }
+.prose > * { max-width: min(68ch, 100%); }
 .prose h1,
 .prose h2,
 .prose h3 {
@@ -18,6 +18,17 @@
   margin-inline: 0;
   padding-left: 20px;
   border-left: 3px solid var(--color-annotation);
+}
+
+.prose pre,
+.prose table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.prose img {
+  height: auto;
 }
 
 .prose code { font-family: var(--font-code); }

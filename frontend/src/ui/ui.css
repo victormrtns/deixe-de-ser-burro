@@ -18,7 +18,7 @@
   justify-content: center;
   border: 0;
   border-radius: var(--radius-pill);
-  padding: 10px 17px;
+  padding: 10px 20px;
   font-weight: 650;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -40,7 +40,7 @@
 .button--danger:hover:not(:disabled) { background: var(--color-danger-hover); }
 
 .surface { background: var(--color-surface); border-radius: var(--radius-card); box-shadow: var(--shadow-surface); }
-.field { display: grid; gap: 6px; }
+.field { display: grid; gap: 8px; }
 .field__label { color: var(--color-ink); font-weight: 650; }
 .field__help { color: var(--color-text-muted); font-size: 13px; }
 .field__input {
@@ -70,12 +70,16 @@
   padding: 28px;
   box-shadow: var(--shadow-overlay);
 }
-.dialog__title { margin: 6px 0 10px; font: 600 28px/1.1 var(--font-display); letter-spacing: -.025em; }
+.dialog__title { margin: 8px 0 12px; font: 600 28px/1.1 var(--font-display); letter-spacing: -.025em; }
 .dialog__description { margin: 0; color: var(--color-text-muted); }
-.dialog__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px; }
+.dialog__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; margin-top: 28px; }
+.dialog__actions > [role='alert'] { flex: 1 0 100%; order: -1; margin: 0; color: var(--color-ink); font-weight: 600; }
+.text-action { display: inline-flex; align-items: center; min-height: 24px; border: 0; background: none; padding: 0; color: var(--color-ink); font: 600 12px/1.2 var(--font-code); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.text-action:disabled { cursor: not-allowed; opacity: .56; }
 .eyebrow { color: var(--color-annotation); font: 600 11px/1.2 var(--font-code); letter-spacing: .09em; text-transform: uppercase; }
-.toast-stack { position: fixed; z-index: 70; right: 18px; bottom: 18px; display: grid; gap: 8px; width: min(360px, calc(100vw - 36px)); }
-.toast { border-radius: var(--radius-control); background: var(--color-ink); color: white; padding: 12px 14px; box-shadow: var(--shadow-overlay); }
+.toast-stack { position: fixed; z-index: 70; right: 18px; bottom: 18px; max-height: calc(100vh - 36px); overflow: hidden; display: grid; gap: 8px; width: min(360px, calc(100vw - 36px)); }
+.toast { border-radius: var(--radius-control); background: var(--color-ink); color: white; padding: 12px 16px; box-shadow: var(--shadow-overlay); }
+.toast--info { border-left: 4px solid var(--color-link); }
 .toast--success { border-left: 4px solid var(--color-success); }
 .toast--warning { border-left: 4px solid var(--color-pending); }
 .toast--error { border-left: 4px solid var(--color-danger); }

@@ -4,10 +4,9 @@ import { RouterProvider } from 'react-router-dom'
 import { expect, it, vi } from 'vitest'
 import { AppProviders } from '@/app/AppProviders'
 import { createAppRouter } from '@/app/router'
-import type { HttpAppApi } from '@/services/contracts'
 import { createMockApi } from '@/services/mockApi'
 
-function renderLibrary(api = createMockApi() as HttpAppApi, path = '/studio') {
+function renderLibrary(api = createMockApi(), path = '/studio') {
   render(<AppProviders api={api}><RouterProvider router={createAppRouter([path])} /></AppProviders>)
   return api
 }
@@ -32,7 +31,7 @@ it('abre o detalhe roteado e cria uma escrita navegando ao workspace', async () 
 
 it('reutiliza a chave de idempotência quando a criação do livro é tentada novamente', async () => {
   const user = userEvent.setup()
-  const api = createMockApi() as HttpAppApi
+  const api = createMockApi()
   const create = vi.spyOn(api.books, 'create')
     .mockRejectedValueOnce(new Error('indisponível'))
     .mockResolvedValueOnce({ id: 'book-new', title: 'O ofício de escrever', author: 'William Zinsser', writingCount: 0 })

@@ -6,7 +6,7 @@
 |---|---|---|
 | Produto, privacidade e ciclo de publicação | `docs/superpowers/specs/2026-08-28-ai-books-learning-blog-design.md` | Área privada autenticada; artigo público nunca expõe artefatos de trabalho; limpeza tem recuperação por três dias. |
 | Identidade e implementação | `docs/superpowers/plans/2026-08-28-visual-identity-frontend.md` | UI em pt-BR, WCAG 2.2 AA e contratos compartilhados. |
-| Referência visual | `design.md` (canônico) | Papel claro, superfícies hairline, tipografia calma e acentos pontuais. `DESIGN.md` está superado e não vale como fonte. |
+| Referência visual | `design.md` (canônico) | Canônico para cor, tipografia e linguagem visual. É referência extraída de fora: os componentes e marcas que ele cita são calibragem de estilo, não o inventário do produto. `DESIGN.md` está superado e não vale como fonte. |
 | Marca e ativos | `brand/` e `brand/README.md` | Nome público `deixedeserburro`; logo, wordmark e favicon vêm dos arquivos versionados, com as faixas de tamanho do README. |
 
 ## Rotas e títulos
@@ -34,11 +34,32 @@ As páginas de 403, 404 e de falha são próprias, preservam a navegação poss�
 
 | Capability | Canonical owner | Source of truth | Allowed variants | Verification |
 |---|---|---|---|---|
+| Ação | `ui/Button` | Este contrato | `primary` / `neutral` / `ghost` / `danger` | unidade + teclado |
+| Ação inline | classe `.text-action` em `ui/ui.css` | Este contrato | única | contraste + teclado |
 | Form | `Field` e formulários `noValidate` | Este contrato | criar / editar / entrar | unidade + teclado |
 | Scrollbar | `styles/globals.css` | Este contrato | apenas geometria documentada | estilo computado |
 | Toast | `ToastProvider` | Este contrato | sucesso / aviso / informação / erro | live region |
-| Dialog | `Dialog` | Este contrato | modal / alertdialog | foco + Escape |
+| Dialog | `ui/Dialog` (confirmação) e `LibraryFormDialog` (criação) | Este contrato | alertdialog de confirmação / dialog de formulário | foco + Escape |
+| Página de falha | `ui/RouteErrorPage` e a classe `.route-error` | Este contrato | 403 / 404 / falha de carregamento | título + navegação possível |
 | CRUD | rotas e serviços de biblioteca | Especificação do produto | retornar à lista / permanecer | E2E completo |
+
+Toda ação clicável é uma das três formas acima. Nenhum `<button>` do produto declara
+o próprio preenchimento, raio ou peso: quem precisa de um botão importa a primitiva.
+Um botão sem classe é defeito, não variante.
+
+`primary` é a única ação escura por região e nunca aparece duas vezes na mesma decisão.
+`danger` existe para exclusão e nunca carrega texto claro sobre o vermelho. É a forma de
+excluir livro, excluir escrita e qualquer ação que descarte trabalho de forma irreversível,
+sempre atrás de um diálogo que nomeia o objeto e a consequência.
+`.text-action` é para recuperação e ações secundárias dentro de conteúdo — tentar de
+novo, restaurar, lembrar — e nunca substitui uma ação primária.
+
+Botão ocupado usa `busy`, que preserva o rótulo, mantém a largura e marca `aria-busy`.
+Trocar o texto por um gerúndio (`Publicando…`, `Aplicando…`) é proibido: muda a
+geometria no meio da interação e quebra a promessa do ledger abaixo.
+
+Falha de rota e falha de carregamento usam a mesma página. Um erro que impede a tela
+inteira não é um parágrafo dentro do layout de conteúdo.
 
 ## Ledger de comportamento
 
@@ -47,13 +68,16 @@ As páginas de 403, 404 e de falha são próprias, preservam a navegação poss�
 | Salvar rascunho | alteração no editor, debounce de 800 ms | “Salvando…” inline | “Salvo” inline | preservar texto e oferecer nova tentativa |
 | Enviar prompt | “Enviar” | mensagem em streaming + “Parar geração” | resposta persistida | tentar novamente o último prompt |
 | Gravar áudio | “Gravar áudio” | tempo decorrido + “Parar” | cartão de processamento | reter blob local e repetir envio |
-| Aceitar sugestão | “Aceitar alteração” | ações do diff bloqueadas | nova versão visível | recarregar versão canônica |
-| Publicar | confirmação em diálogo | botão com geometria estável | URL pública + aviso de três dias | manter rascunho e explicar a falha |
+| Aceitar sugestão | “Aceitar alteração” | botão `busy`, demais ações do diff bloqueadas | nova versão visível | recarregar versão canônica |
+| Publicar | confirmação em diálogo | botão `busy`, rótulo e largura preservados | URL pública, aviso de três dias e toast | manter rascunho e explicar a falha |
 | Entrar | envio de e-mail e senha | botão ocupado sem salto de layout | retorno à rota privada solicitada | credencial inválida inline, preservando e-mail |
 | Sair | ação “Sair” na shell privada | sessão sendo revogada | landing pública sem acesso ao cache privado | permitir nova tentativa sem expor dados |
 | Sessão expirada | resposta `authentication_required` | preservar o texto local | redirecionar a `/entrar` com destino de retorno | nunca descartar edição silenciosamente |
 | Conflito de versão | autosave ou restauração com versão antiga | texto local permanece editável | recarregar versão canônica por ação explícita | nunca fazer merge silencioso |
-| Retirar publicação | “Voltar para rascunho” | ação ocupada | snapshot deixa de ser público | manter estado publicado e explicar falha |
+| Retirar publicação | “Voltar para rascunho” | ação ocupada | snapshot deixa de ser público, toast confirma | manter estado publicado e explicar falha em toast de erro |
+| Cancelar limpeza | “Cancelar limpeza” | ação ocupada | contexto privado permanece, toast confirma | manter agendamento e explicar falha em toast de erro |
+| Restaurar versão | “Restaurar” no histórico | ação ocupada | texto substituído, toast nomeia a versão | conflito recarrega a versão canônica, sem toast de sucesso |
+| Excluir livro ou escrita | ação destrutiva em diálogo | ação ocupada | item some da lista, toast confirma | manter o item e explicar a falha |
 
 ## Navegação e foco
 
@@ -63,7 +87,14 @@ Cada painel do workspace declara seu scroll. A shell global não usa `overflow: 
 
 ## Formulários, feedback e falhas
 
-Formulários usam `noValidate`, erros inline associados, valores preservados e foco no primeiro campo inválido. Submissão duplicada é bloqueada sem mudar dimensões. Toast confirma ações concluídas; nunca carrega a única explicação de um erro corrigível. Diálogos destrutivos nomeiam objeto e consequência, focam inicialmente a opção segura e restauram foco ao fechar.
+Diálogos destrutivos e de confirmação focam inicialmente a ação que não altera nada — “Cancelar” ou “Continuar editando” — e a ação que confirma nunca recebe `autoFocus`.
+
+Formulários usam `noValidate`, erros inline associados, valores preservados e foco no primeiro campo inválido. Submissão duplicada é bloqueada sem mudar dimensões. Toast confirma ações concluídas cujo resultado não é visível na tela em que a ação
+aconteceu — publicar, retirar publicação, cancelar limpeza, restaurar versão, criar livro
+ou escrita. Ação que já se confirma no próprio lugar, como aceitar uma sugestão, não recebe
+toast: seria a segunda cópia da mesma informação. Toast nunca carrega a única explicação de
+um erro corrigível, e nunca anuncia sucesso que não aconteceu — operação que engole a própria
+exceção precisa devolver o desfecho a quem chamou antes de notificar. Diálogos destrutivos nomeiam objeto e consequência, focam inicialmente a opção segura e restauram foco ao fechar.
 
 Estados assíncronos cobrem carregando, vazio, sem resultados, erro, cancelamento, sucesso e nova tentativa quando honesta. O layout reserva espaço para feedback. Sessão expirada preserva trabalho local não sensível e direciona a autenticação. Rascunhos pendentes de sincronização são explicitamente rotulados.
 

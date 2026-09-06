@@ -2,10 +2,11 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { WorkspacePage } from '@/features/workspace/WorkspacePage'
-import type { SaveMarkdown } from '@/features/workspace/WorkspaceProvider'
+import { WorkspaceProvider, type SaveMarkdown } from '@/features/workspace/WorkspaceProvider'
+import { Workspace } from '@/features/workspace/Workspace'
 import { AppProviders } from '@/app/AppProviders'
 import { createMockApi } from '@/services/mockApi'
-import type { HttpAppApi } from '@/services/contracts'
+import type { AppApi } from '@/services/contracts'
 
 afterEach(() => vi.useRealTimers())
 
@@ -71,7 +72,7 @@ it('mantém o editor utilizável durante a geração do assistente', async () =>
   const user = userEvent.setup()
   const mock = createMockApi()
   let release = () => {}
-  const api: HttpAppApi = { ...mock, chat: { ...mock.chat, streamReply: async (_writingId, _content, _key, _signal, onEvent) => {
+  const api: AppApi = { ...mock, chat: { ...mock.chat, streamReply: async (_writingId, _content, _key, _signal, onEvent) => {
     onEvent({ type: 'generation.started', version: 1, attemptId: 'a1', sequence: 0, messageId: 'assistant-1', attemptNumber: 1 })
     onEvent({ type: 'response.delta', version: 1, attemptId: 'a1', sequence: 1, delta: 'Trecho parcial' })
     await new Promise<void>((resolve) => { release = resolve })
@@ -100,4 +101,22 @@ it('expande o documento ao recolher os dois contextos sem perder o texto', async
   expect(screen.getByRole('button', { name: 'Mostrar contexto do livro' })).toHaveAttribute('aria-expanded', 'false')
   expect(screen.getByRole('button', { name: 'Mostrar assistente' })).toHaveAttribute('aria-expanded', 'false')
   expect(screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'Conteúdo Markdown' }).value).toContain('Nota preservada')
+})
+
+it('troca o modo do documento pelas setas e aponta a aba para o painel', async () => {
+  const user = userEvent.setup()
+  render(<WorkspaceProvider save={async () => {}} initialMarkdown="# Texto" initialVersion={1}><Workspace.Tabs /><Workspace.Canvas /></WorkspaceProvider>)
+
+  const escrever = screen.getByRole('tab', { name: 'Escrever' })
+  expect(escrever).toHaveAttribute('aria-selected', 'true')
+  expect(escrever).toHaveAttribute('aria-controls', 'workspace-canvas')
+  expect(screen.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', 'workspace-tab-edit')
+
+  escrever.focus()
+  await user.keyboard('{ArrowRight}')
+  expect(screen.getByRole('tab', { name: 'Visualizar' })).toHaveAttribute('aria-selected', 'true')
+  expect(escrever).toHaveAttribute('tabindex', '-1')
+
+  await user.keyboard('{ArrowLeft}')
+  expect(screen.getByRole('tab', { name: 'Escrever' })).toHaveAttribute('aria-selected', 'true')
 })

@@ -5,6 +5,18 @@
 
 deixedeserburro speaks in a warm parchment-and-ink language: a cream canvas (#fbfaf9) carries heavy-stroke line art — the donkey mark and its engraved cousins — while typography stays calm and utilitarian in Inter over a Bricolage Grotesque display face. The interface itself is deliberately restrained — inset hairline borders define surfaces rather than shadows — so the drawing carries the emotional weight and the chrome stays quiet. Color functions as semantic markers: near-black for the one serious action, blue for links, ember for annotation, gold and green for positive signals, red for destructive. Status colour never lives in text: the accent carries the ground and the text stays ink, which is what keeps the palette accessible on paper cream. Every screen should read like a printed page: generous whitespace, big confident headings, and one drawn mark punctuating an otherwise monochrome layout.
 
+> [!NOTE]
+> **Isto é a referência visual, não o inventário do produto.**
+>
+> `design.md` foi extraído de uma referência externa e é canônico para **cor,
+> tipografia e linguagem visual**. Os componentes descritos abaixo — cartões de
+> feature, linhas de Send/Swap/Receive, cartões de tweet, mockups de telefone — e as
+> marcas semelhantes citadas pertencem à referência de origem, não ao deixedeserburro.
+> Eles ficam como calibragem de estilo e não devem ser construídos a partir daqui.
+>
+> Os componentes que o produto realmente tem, com dono e regra de uso, estão no
+> **`UX-CONTRACT.md`**, seção *Mapa canônico de UI*.
+
 ## Tokens — Colors
 
 | Name | Value | Token | Role |
@@ -203,7 +215,7 @@ The signature border technique: 1px inset box-shadow in #f2f0ed creates an inter
 - Let #d93500 carry the 'demo link' and accent text role; keep ember orange for inline links and feature callouts, never as a filled button
 - Set body text in Inter 400 at 16-17px with line-height 1.42-1.53 and letter-spacing -0.013 to -0.016em
 - Use the cream canvas (#fbfaf9) as the base for every full-bleed section; alternate by introducing the #f2f0ed stone surface for grouped card clusters
-- Use illustration clusters of cartoon mascots in primary fills to anchor hero sections; scatter them asymmetrically so the centered text remains the focal point
+- Keep illustration to empty states, public covers and the brand signature, drawn as the heavy-stroke line art described under *Imagery*; the studio chrome stays monochrome
 
 ### Don't
 - Never use a drop shadow larger than rgba(0,0,0,0.04) — the design system rejects heavy elevation

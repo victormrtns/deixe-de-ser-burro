@@ -1,4 +1,4 @@
-import type { AudioClip, Book, HttpAppApi, LimitState, Message, PublicationStatus, Suggestion, UsageSummary, Writing, WritingVersion } from '@/services/contracts'
+import type { AppApi, AudioClip, Book, LimitState, Message, PublicationStatus, Suggestion, UsageSummary, Writing, WritingVersion } from '@/services/contracts'
 import { publicArticleFixtures, publicBookFixtures, publicLandingFixture } from '@/services/mock/fixtures'
 
 const writing: Writing = { id: 'writing-deep-work-01', bookId: 'book-deep-work', title: 'Ritual antes do foco', markdown: '# Ritual antes do foco', sourceRange: 'Capítulos 3–4', status: 'draft', version: 4, updatedAt: '2026-08-28T10:21:00-03:00' }
@@ -22,7 +22,7 @@ const publicationStatus: PublicationStatus = {
   cleanupCompletedAt: null,
 }
 
-export function createMockApi(options: { usage?: LimitState; session?: 'anonymous' | 'author' } = {}): HttpAppApi {
+export function createMockApi(options: { usage?: LimitState; session?: 'anonymous' | 'author' } = {}): AppApi {
   let currentWriting = { ...writing }
   const currentWritings = [currentWriting]
   let currentSession: 'anonymous' | 'author' = options.session ?? 'author'

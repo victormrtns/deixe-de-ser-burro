@@ -8,7 +8,7 @@ export type SaveMarkdown = (markdown: string, expectedVersion: number) => Promis
 
 type WorkspaceContract = {
   state: { markdown: string; editorMode: EditorMode; saveState: SaveState; expectedVersion: number }
-  actions: { updateMarkdown(markdown: string): void; changeMode(mode: EditorMode): void; retrySave(): Promise<void>; reloadCanonical(): Promise<void>; restoreVersion(versionNumber: number): Promise<void> }
+  actions: { updateMarkdown(markdown: string): void; changeMode(mode: EditorMode): void; retrySave(): Promise<void>; reloadCanonical(): Promise<void>; restoreVersion(versionNumber: number): Promise<boolean> }
 }
 
 const WorkspaceContext = createContext<WorkspaceContract | null>(null)
@@ -44,9 +44,9 @@ export function WorkspaceProvider({ children, save, initialMarkdown = '# Ritual 
   }, [reload])
 
   const restoreVersion = useCallback(async (versionNumber: number) => {
-    if (!restore) return
-    try { const restored = await restore(versionNumber, expectedVersionRef.current); skipNextAutosave.current = true; setMarkdown(restored.markdown); expectedVersionRef.current = restored.version; setExpectedVersion(restored.version); setSaveState('saved') }
-    catch (error) { setSaveState(error instanceof ApiError && error.code === 'writing_version_conflict' ? 'conflict' : 'failed') }
+    if (!restore) return false
+    try { const restored = await restore(versionNumber, expectedVersionRef.current); skipNextAutosave.current = true; setMarkdown(restored.markdown); expectedVersionRef.current = restored.version; setExpectedVersion(restored.version); setSaveState('saved'); return true }
+    catch (error) { setSaveState(error instanceof ApiError && error.code === 'writing_version_conflict' ? 'conflict' : 'failed'); return false }
   }, [restore])
 
   useEffect(() => {

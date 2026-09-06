@@ -63,12 +63,39 @@ a { color: inherit; }
 
 button:focus-visible,
 a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;
   box-shadow: var(--focus-ring);
+}
+
+/*
+ * Campos de texto ganham tratamento próprio. Em input e textarea, :focus-visible
+ * casa também no clique do mouse — o navegador considera que campo de escrita
+ * sempre precisa de indicador — então o anel deslocado de 3px mais o brilho
+ * externo apareciam toda vez que alguém clicava para escrever, saltando por cima
+ * dos vizinhos. Aqui o anel entra para dentro da borda: o campo acende, em vez
+ * de ganhar um halo.
+ */
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+  box-shadow: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+li {
+  overflow-wrap: break-word;
+}
+
+img,
+video {
+  max-width: 100%;
 }
 
 ::selection {

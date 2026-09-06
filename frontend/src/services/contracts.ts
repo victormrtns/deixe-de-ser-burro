@@ -88,10 +88,27 @@ export interface PublicationStatus {
 export interface PublicArticleDetail extends PublicArticleSummary { markdown: string }
 export interface PublicBookDetail extends PublicBookSummary { articles: PublicArticleSummary[] }
 
-export interface BooksApi { list(): Promise<Book[]>; create(input: Pick<Book, 'title' | 'author'>): Promise<Book> }
+export interface BooksApi {
+  list(): Promise<Book[]>
+  create(input: Pick<Book, 'title' | 'author'>, idempotencyKey?: string): Promise<Book>
+  get(id: string): Promise<Book>
+  update(id: string, input: Partial<Pick<Book, 'title' | 'author'>>): Promise<Book>
+  remove(id: string): Promise<void>
+}
 export interface WritingsApi {
   getWorkspace(id: string): Promise<WorkspacePayload>
   save(input: { id: string; markdown: string; expectedVersion: number }): Promise<Writing>
+  create(
+    bookId: string,
+    input: { title: string; sourceRange: string; markdown?: string },
+    idempotencyKey?: string,
+  ): Promise<Writing>
+  listByBook(bookId: string): Promise<Writing[]>
+  get(id: string): Promise<Writing>
+  updateMetadata(input: { id: string; expectedVersion: number; title?: string; sourceRange?: string }): Promise<Writing>
+  remove(id: string): Promise<void>
+  listVersions(id: string, cursor?: string): Promise<WritingVersionPage>
+  restoreVersion(input: { id: string; versionNumber: number; expectedVersion: number }): Promise<Writing>
 }
 export type ChatStreamEvent =
   | { type: 'generation.started'; version: 1; attemptId: string; sequence: number; messageId: string; attemptNumber: number }
@@ -122,38 +139,21 @@ export interface PublicApi {
   getLanding(): Promise<PublicLanding>
   listArticles(): Promise<PublicArticleSummary[]>
   listBooks(): Promise<PublicBookSummary[]>
-}
-
-export interface AppApi { auth: AuthApi; books: BooksApi; writings: WritingsApi; chat: ChatApi; audio: AudioApi; suggestions: SuggestionsApi; publishing: PublishingApi; usage: UsageApi; public: PublicApi }
-
-export interface BooksAdminApi extends BooksApi {
-  create(input: Pick<Book, 'title' | 'author'>, idempotencyKey?: string): Promise<Book>
-  get(id: string): Promise<Book>
-  update(id: string, input: Partial<Pick<Book, 'title' | 'author'>>): Promise<Book>
-  remove(id: string): Promise<void>
-}
-
-export interface WritingsAdminApi extends WritingsApi {
-  create(
-    bookId: string,
-    input: { title: string; sourceRange: string; markdown?: string },
-    idempotencyKey?: string,
-  ): Promise<Writing>
-  listByBook(bookId: string): Promise<Writing[]>
-  get(id: string): Promise<Writing>
-  updateMetadata(input: { id: string; expectedVersion: number; title?: string; sourceRange?: string }): Promise<Writing>
-  remove(id: string): Promise<void>
-  listVersions(id: string, cursor?: string): Promise<WritingVersionPage>
-  restoreVersion(input: { id: string; versionNumber: number; expectedVersion: number }): Promise<Writing>
-}
-
-export interface PublicAdminApi extends PublicApi {
   getArticle(slug: string): Promise<PublicArticleDetail>
   getBook(slug: string): Promise<PublicBookDetail>
 }
 
-export interface HttpAppApi extends AppApi {
-  books: BooksAdminApi
-  writings: WritingsAdminApi
-  public: PublicAdminApi
+export interface AppApi {
+  auth: AuthApi
+  books: BooksApi
+  writings: WritingsApi
+  chat: ChatApi
+  audio: AudioApi
+  suggestions: SuggestionsApi
+  publishing: PublishingApi
+  usage: UsageApi
+  public: PublicApi
 }
+
+// Alias transitório: features/workspace ainda importa este nome em outra branch.
+// Remover quando aquela branch encostar.

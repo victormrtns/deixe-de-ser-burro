@@ -1,4 +1,4 @@
-import { createContext, use, useMemo, useState, type ReactNode } from 'react'
+import { createContext, use, useState, type ReactNode } from 'react'
 
 export type RecorderState = 'idle' | 'requesting_permission' | 'recording' | 'preview' | 'uploading' | 'processing' | 'failed'
 type RecorderContract = { state: RecorderState; error: string | null; request(): Promise<void>; stop(): void; select(file: File): void; retry(): void }
@@ -13,7 +13,14 @@ export function RecorderProvider({ children, getUserMedia = (constraints) => nav
     catch { setError('Permita o microfone no navegador ou envie um arquivo de áudio.'); setState('failed') }
   }
   const select = (file: File) => { if (!file.type.startsWith('audio/')) { setError('Escolha um arquivo de áudio compatível.'); setState('failed'); return } setError(null); setState('preview') }
-  const value = useMemo(() => ({ state, error, request, stop: () => { setState('preview'); onReady?.() }, select: (file: File) => { select(file); if (file.type.startsWith('audio/')) onReady?.() }, retry: () => { setError(null); setState('idle') } }), [state, error, onReady])
+  const value: RecorderContract = {
+    state,
+    error,
+    request,
+    stop: () => { setState('preview'); onReady?.() },
+    select: (file: File) => { select(file); if (file.type.startsWith('audio/')) onReady?.() },
+    retry: () => { setError(null); setState('idle') },
+  }
   return <RecorderContext value={value}>{children}</RecorderContext>
 }
 
