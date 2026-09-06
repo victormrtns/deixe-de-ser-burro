@@ -18,7 +18,7 @@ for (const file of files) {
   const source = await readFile(file, 'utf8')
   for (const pattern of forbidden) if (pattern.test(source)) violations.push(`${file}: ${pattern}`)
   if (file.endsWith('/main.tsx') && /createMockApi/.test(source)) violations.push(`${file}: mock no entrypoint de produção`)
-  if (file.includes('/features/') && /\bfetch\s*\(/.test(source)) violations.push(`${file}: fetch direto fora do adaptador`)
+  if (!file.includes('/services/') && /\bfetch\s*\(/.test(source)) violations.push(`${file}: fetch direto fora do adaptador`)
   if (/R\$ 12,40 de R\$ 70,00/.test(source)) violations.push(`${file}: orçamento fictício`)
 }
 if (violations.length) {

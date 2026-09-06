@@ -1,4 +1,4 @@
-import type { ApiErrorShape, ChatStreamEvent, ChatStreamListener, HttpAppApi, Message } from '@/services/contracts'
+import type { ApiErrorShape, AppApi, ChatStreamEvent, ChatStreamListener, Message } from '@/services/contracts'
 import { createMockApi } from '@/services/mockApi'
 
 export class ApiError extends Error {
@@ -133,7 +133,7 @@ async function streamEvents(path: string, options: { body?: unknown; idempotency
 // explicitly instead of hitting endpoints that do not exist.
 const deferredToMock = createMockApi()
 
-export const httpApi: HttpAppApi = {
+export const httpApi: AppApi = {
   auth: {
     getSession: () => request('/api/auth/session'),
     signIn: (email, password) =>
