@@ -48,7 +48,7 @@ def sample_input(
         completed_pairs=pairs(1) if completed_pairs is None else completed_pairs,
         current_prompt=prompt,
         editorial_policy="Preserve a voz do autor.",
-        instruction_version="parte-1-v1",
+        instruction_version="parte-1-v2",
     )
 
 
@@ -65,7 +65,7 @@ def test_orders_trusted_layers_before_untrusted_content() -> None:
         < result.input.index("[HISTORICO]")
         < result.input.index("[PEDIDO_ATUAL]")
     )
-    assert result.instruction_version == "parte-1-v1"
+    assert result.instruction_version == "parte-1-v2"
 
 
 def test_fixed_rules_state_the_non_negotiable_constraints() -> None:
@@ -137,10 +137,10 @@ def test_empty_memory_renders_an_explicit_no_memory_line() -> None:
 def test_load_editorial_policy_returns_the_body_and_its_version() -> None:
     body, version = load_editorial_policy()
 
-    assert version == "parte-1-v1"
+    assert version == "parte-1-v2"
     assert "---" not in body
     assert "instruction-version" not in body
-    assert body.startswith("# Linha editorial do Entrelinhas")
+    assert body.startswith("# Linha editorial do deixedeserburro")
 
 
 def test_composed_context_is_frozen() -> None:
@@ -149,3 +149,28 @@ def test_composed_context_is_frozen() -> None:
     assert isinstance(result, ComposedContext)
     with pytest.raises(AttributeError):
         result.instructions = "outra coisa"  # type: ignore[misc]
+
+
+def test_the_markdown_guard_fires_before_the_total_guard() -> None:
+    # A Markdown that alone exceeds its own limit, while the whole composed
+    # context still fits under the total: only the first guard can catch it.
+    limits = ContextLimits(max_markdown_chars=1_000, max_total_chars=120_000)
+
+    with pytest.raises(AppError) as failure:
+        compose_context(sample_input(markdown="x" * 1_001), limits)
+
+    assert failure.value.code == "context_too_large"
+    assert failure.value.message == "Esta escrita excede o limite do assistente."
+
+
+def test_the_configured_markdown_limit_leaves_room_for_the_rest_of_the_context() -> None:
+    from app.config import Settings
+
+    settings = Settings(
+        environment="test",
+        database_url="postgresql+psycopg://user:pass@localhost:5432/entrelinhas",
+        public_origin="http://localhost:5173",
+        files_root="/tmp/files",
+    )
+
+    assert settings.ai_max_markdown_chars < settings.ai_max_context_chars

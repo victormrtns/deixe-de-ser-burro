@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 
 from openai import APIError, APITimeoutError, AsyncOpenAI, RateLimitError
+from openai.types.shared_params import Reasoning
 
 from app.assistant.gateway import GatewayError, ModelEvent, ModelRequest, ModelUsage
 
@@ -21,6 +22,13 @@ _MESSAGES = {
 def _failure(code: str) -> GatewayError:
     """Build the error from a fixed code and message: no provider payload, no key, no content."""
     return GatewayError(code, _MESSAGES[code])
+
+
+def _truncation_reason(response: object) -> str:
+    """The provider's own reason, reduced to a short safe token. No content."""
+    details = getattr(response, "incomplete_details", None)
+    reason = getattr(details, "reason", None)
+    return str(reason)[:64] if reason else "unknown"
 
 
 def _code_for(error: APIError) -> str:
@@ -48,6 +56,7 @@ class OpenAIModelGateway:
                 instructions=request.instructions,
                 input=request.input,
                 max_output_tokens=request.max_output_tokens,
+                reasoning=Reasoning(effort=request.reasoning_effort),
                 store=False,
                 stream=True,
                 timeout=REQUEST_TIMEOUT_SECONDS,
@@ -67,12 +76,15 @@ class OpenAIModelGateway:
                             raise _failure("provider_protocol_error")
                         yield ModelEvent(type="text_delta", delta=event.delta)
                     elif event.type in ("response.completed", "response.incomplete"):
-                        # `incomplete` means the answer was truncated (max_output_tokens);
-                        # the usage is final either way, so it closes the stream too.
+                        # `incomplete` means the provider cut the answer short
+                        # (usually `max_output_tokens`). The usage is final and
+                        # billable either way, so it closes the stream too — but
+                        # the caller has to know it is not a whole answer.
                         usage = event.response.usage
                         if not started or completed or usage is None:
                             raise _failure("provider_protocol_error")
                         completed = True
+                        truncated = event.type == "response.incomplete"
                         yield ModelEvent(
                             type="completed",
                             usage=ModelUsage(
@@ -80,6 +92,10 @@ class OpenAIModelGateway:
                                 output_tokens=usage.output_tokens,
                                 total_tokens=usage.total_tokens,
                             ),
+                            truncated=truncated,
+                            truncation_reason=_truncation_reason(event.response)
+                            if truncated
+                            else None,
                         )
         except APIError as error:
             raise _failure(_code_for(error)) from error

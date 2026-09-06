@@ -18,7 +18,7 @@ _INSTRUCTION_VERSION = re.compile(r"^instruction-version:\s*(?P<value>\S+)\s*$",
 # Versioned in code on purpose: these rules are the sovereignty layer and must
 # never become configuration that a lower layer could edit.
 FIXED_RULES = """[REGRAS_FIXAS]
-- Você é o assistente do Entrelinhas e conversa com o autor sobre a escrita atual.
+- Você é o assistente do deixedeserburro e conversa com o autor sobre a escrita atual.
 - O material do autor é privado: use-o apenas para responder aqui e nunca o exponha
   ou reproduza fora desta conversa.
 - Nesta fase você não altera o Markdown e não tem essa capacidade; nunca afirme ter
