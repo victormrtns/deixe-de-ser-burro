@@ -37,7 +37,35 @@ PRIVATE_FIELD_NAMES = {
     "updatedAt",
     "createdAt",
     "expectedVersion",
+    # Contextual AI conversation: nothing about a conversation, an attempt, the
+    # local memory, or spending may reach a public projection.
+    "role",
+    "content",
+    "attemptId",
+    "attemptNumber",
+    "instructionVersion",
+    "providerResponseId",
+    "safeErrorCode",
+    "inputTokens",
+    "outputTokens",
+    "totalTokens",
+    "estimatedCostUsdMicros",
+    "spentUsdMicros",
+    "reservedUsdMicros",
+    "limitUsdMicros",
+    "limitState",
+    "budgetState",
+    "sourceMessageId",
+    "kind",
 }
+PRIVATE_SCHEMA_SUBSTRINGS = (
+    "Conversation",
+    "Message",
+    "Memory",
+    "Attempt",
+    "Usage",
+    "Generation",
+)
 ALLOWED_PUBLIC_SCHEMA_PREFIXES = ("Public", "HTTPValidationError", "ValidationError")
 
 
@@ -92,6 +120,9 @@ def main() -> int:
         referenced_schema_names(operations, direct_references)
         for name in closure_of_schemas(direct_references, components):
             if not name.startswith(ALLOWED_PUBLIC_SCHEMA_PREFIXES):
+                violations.append(f"{path}: referencia schema privado {name}")
+                continue
+            if any(marker in name for marker in PRIVATE_SCHEMA_SUBSTRINGS):
                 violations.append(f"{path}: referencia schema privado {name}")
                 continue
             if name.startswith("Public"):

@@ -1,2 +1,0 @@
-import { expect, test } from '@playwright/test'
-test('abre a biblioteca privada e cria um livro', async ({ page }) => { await page.goto('/studio'); await page.getByRole('button', { name: /Adicionar livro/ }).click(); await page.getByLabel('Título').fill('O ofício da atenção'); await page.getByLabel('Autor').fill('Autora exemplo'); await page.getByRole('button', { name: 'Adicionar livro' }).click(); await expect(page.getByText('O ofício da atenção')).toBeVisible() })

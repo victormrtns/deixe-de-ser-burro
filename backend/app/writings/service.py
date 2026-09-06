@@ -7,6 +7,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.assistant import service as assistant_service
 from app.errors import AppError
 from app.idempotency.service import StoredResponse, canonical_request_hash, execute_idempotent
 from app.library.persistence import find_book
@@ -77,9 +78,12 @@ async def get_writing(session: AsyncSession, writing_id: UUID) -> WritingDto:
 
 async def get_workspace(session: AsyncSession, writing_id: UUID) -> WorkspacePayload:
     writing = await _require_writing(session, writing_id)
-    # Chat, audio, and suggestions are deferred modules: the payload keeps their
-    # collections present and empty so the frontend contract stays stable.
-    return WorkspacePayload(writing=_to_dto(writing))
+    # Audio and suggestions are still deferred modules: their collections stay
+    # present and empty so the frontend contract does not move.
+    return WorkspacePayload(
+        writing=_to_dto(writing),
+        messages=await assistant_service.list_messages(session, writing_id),
+    )
 
 
 async def save_markdown(

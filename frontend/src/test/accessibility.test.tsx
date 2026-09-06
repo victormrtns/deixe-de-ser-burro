@@ -7,7 +7,7 @@ import { PublicArticlePage } from '@/public-site/PublicArticlePage'
 import { AppProviders } from '@/app/AppProviders'
 import { createMockApi } from '@/services/mockApi'
 
-it.each([['entrada', <SignInPage />], ['artigo', <AppProviders api={createMockApi()}><MemoryRouter><PublicArticlePage /></MemoryRouter></AppProviders>]])('não possui violações axe críticas em %s', async (_name, view) => {
+it.each([['entrada', <AppProviders api={createMockApi({ session: 'anonymous' })}><MemoryRouter><SignInPage /></MemoryRouter></AppProviders>], ['artigo', <AppProviders api={createMockApi()}><MemoryRouter><PublicArticlePage /></MemoryRouter></AppProviders>]])('não possui violações axe críticas em %s', async (_name, view) => {
   const { container } = render(view)
   const result = await axe.run(container, { rules: { 'color-contrast': { enabled: false } } })
   expect(result.violations.filter((violation) => ['critical', 'serious'].includes(violation.impact ?? ''))).toEqual([])

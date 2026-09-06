@@ -1,12 +1,13 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { RouterProvider } from 'react-router-dom'
 import { expect, it } from 'vitest'
 import { createAppRouter } from '@/app/router'
 import { AppProviders } from '@/app/AppProviders'
 import { createMockApi } from '@/services/mockApi'
 
-function renderRoute(path: string, authenticated = true) {
-  return render(<AppProviders api={createMockApi()}><RouterProvider router={createAppRouter([path], { authenticated })} /></AppProviders>)
+function renderRoute(path: string, session: 'anonymous' | 'author' = 'author') {
+  return render(<AppProviders api={createMockApi({ session })}><RouterProvider router={createAppRouter([path])} /></AppProviders>)
 }
 
 it('permite leitura pública sem autenticação', async () => {
@@ -15,9 +16,20 @@ it('permite leitura pública sem autenticação', async () => {
 })
 
 it('redireciona a rota privada para entrada quando não há sessão', async () => {
-  renderRoute('/studio', false)
+  renderRoute('/studio', 'anonymous')
   expect(await screen.findByRole('heading', { name: 'Volte ao seu caderno' })).toBeVisible()
   expect(document.title).toBe('Entrar — Entrelinhas')
+})
+
+it('retorna à rota privada solicitada depois do login', async () => {
+  const user = userEvent.setup()
+  renderRoute('/studio', 'anonymous')
+
+  await user.type(await screen.findByLabelText('E-mail'), 'autor@example.com')
+  await user.type(screen.getByLabelText('Senha'), 'senha-correta')
+  await user.click(screen.getByRole('button', { name: 'Entrar no estúdio' }))
+
+  expect(await screen.findByRole('heading', { name: /biblioteca/i })).toBeVisible()
 })
 
 it('renderiza páginas próprias para 403 e 404', async () => {

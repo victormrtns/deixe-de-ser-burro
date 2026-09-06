@@ -11,6 +11,7 @@ import pytest
 import pytest_asyncio
 from alembic import command
 from alembic.config import Config
+from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import select, text
 from sqlalchemy.engine import URL, make_url
@@ -92,8 +93,16 @@ def files_root(tmp_path: Path) -> Path:
     return tmp_path / "files"
 
 
+@pytest.fixture
+def settings_overrides() -> dict[str, object]:
+    """Per-test Settings tweaks, applied by the `api_app` fixture."""
+    return {}
+
+
 @pytest_asyncio.fixture
-async def client(migrated_database_url: str, files_root: Path) -> AsyncIterator[AsyncClient]:
+async def api_app(
+    migrated_database_url: str, files_root: Path, settings_overrides: dict[str, object]
+) -> AsyncIterator[FastAPI]:
     from app.config import Settings, get_settings
     from app.db import Database, get_session
     from app.main import create_app
@@ -104,23 +113,35 @@ async def client(migrated_database_url: str, files_root: Path) -> AsyncIterator[
         async with database.session() as current_session:
             yield current_session
 
-    app = create_app()
-    app.dependency_overrides[get_session] = override_session
-    app.dependency_overrides[get_settings] = lambda: Settings(
-        environment="test",
-        database_url=migrated_database_url,
-        public_origin="http://localhost:5173",
-        files_root=files_root,
-    )
+    application = create_app()
+    application.dependency_overrides[get_session] = override_session
+
+    # Built per request, so a fixture may still tweak `settings_overrides`
+    # after the app exists.
+    def override_settings() -> Settings:
+        return Settings(
+            environment="test",
+            database_url=migrated_database_url,
+            public_origin="http://localhost:5173",
+            files_root=files_root,
+            **settings_overrides,
+        )
+
+    application.dependency_overrides[get_settings] = override_settings
     try:
-        async with AsyncClient(
-            transport=ASGITransport(app=app, raise_app_exceptions=False),
-            base_url="http://test",
-        ) as test_client:
-            yield test_client
+        yield application
     finally:
-        app.dependency_overrides.clear()
+        application.dependency_overrides.clear()
         await database.dispose()
+
+
+@pytest_asyncio.fixture
+async def client(api_app: FastAPI) -> AsyncIterator[AsyncClient]:
+    async with AsyncClient(
+        transport=ASGITransport(app=api_app, raise_app_exceptions=False),
+        base_url="http://test",
+    ) as test_client:
+        yield test_client
 
 
 @pytest_asyncio.fixture

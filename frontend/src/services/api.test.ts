@@ -16,7 +16,7 @@ it('expõe estados de orçamento sem bloquear edição manual', async () => {
   const usage = await api.usage.getSummary()
 
   expect(usage.limitState).toBe('blocked')
-  expect(usage.estimatedAiCostBrl).toBe(70)
+  expect(usage.spentUsdMicros).toBe(usage.limitUsdMicros)
   expect(await api.writings.save({ id: 'writing-deep-work-01', markdown: '# Ainda editável', expectedVersion: 4 })).toMatchObject({ markdown: '# Ainda editável' })
 })
 

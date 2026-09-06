@@ -5,10 +5,14 @@ export type LimitState = 'normal' | 'near_limit' | 'blocked'
 
 export interface Book { id: string; title: string; author: string; coverUrl?: string; writingCount: number }
 export interface Writing { id: string; bookId: string; title: string; markdown: string; sourceRange: string; status: WritingStatus; version: number; updatedAt: string }
-export interface Message { id: string; writingId: string; role: 'author' | 'assistant'; content: string; createdAt: string }
+export type MessageState = 'streaming' | 'completed' | 'interrupted' | 'failed'
+export type MemoryKind = 'preference' | 'decision' | 'open_question'
+export interface Message { id: string; writingId: string; role: 'author' | 'assistant'; content: string; state: MessageState; createdAt: string }
+export interface MemoryItem { id: string; kind: MemoryKind; content: string; createdAt: string }
 export interface AudioClip { id: string; writingId: string; title: string; status: JobStatus; durationSeconds: number }
 export interface Suggestion { id: string; writingId: string; summary: string; before: string; after: string; status: SuggestionStatus }
-export interface UsageSummary { period: string; audioMinutes: number; estimatedAiCostBrl: number; monthlyLimitBrl: number; limitState: LimitState }
+export interface UsageSummary { period: string; spentUsdMicros: number; reservedUsdMicros: number; limitUsdMicros: number; limitState: LimitState }
+export interface GenerationUsage { inputTokens: number; outputTokens: number; totalTokens: number; estimatedCostUsdMicros: number; budgetState: LimitState }
 export interface WorkspacePayload { writing: Writing; messages: Message[]; audio: AudioClip[]; suggestions: Suggestion[] }
 
 interface ConversationEventBase { id: string; writingId: string; createdAt: string; status: 'pending' | 'ready' | 'failed' }
@@ -89,7 +93,22 @@ export interface WritingsApi {
   getWorkspace(id: string): Promise<WorkspacePayload>
   save(input: { id: string; markdown: string; expectedVersion: number }): Promise<Writing>
 }
-export interface ChatApi { list(writingId: string): Promise<Message[]> }
+export type ChatStreamEvent =
+  | { type: 'generation.started'; version: 1; attemptId: string; sequence: number; messageId: string; attemptNumber: number }
+  | { type: 'response.delta'; version: 1; attemptId: string; sequence: number; delta: string }
+  | { type: 'response.completed'; version: 1; attemptId: string; sequence: number; usage: GenerationUsage }
+  | { type: 'response.interrupted'; version: 1; attemptId: string; sequence: number }
+  | { type: 'response.failed'; version: 1; attemptId: string; sequence: number; error: ApiErrorShape }
+
+export type ChatStreamListener = (event: ChatStreamEvent) => void
+
+export interface ChatApi {
+  list(writingId: string): Promise<Message[]>
+  streamReply(writingId: string, content: string, idempotencyKey: string, signal: AbortSignal, onEvent: ChatStreamListener): Promise<void>
+  retry(writingId: string, messageId: string, idempotencyKey: string, signal: AbortSignal, onEvent: ChatStreamListener): Promise<void>
+  remember(writingId: string, input: { kind: MemoryKind; content: string; sourceMessageId?: string }): Promise<MemoryItem>
+  getUsage(writingId: string): Promise<UsageSummary>
+}
 export interface AudioApi { list(writingId: string): Promise<AudioClip[]> }
 export interface SuggestionsApi { list(writingId: string): Promise<Suggestion[]> }
 export interface PublishingApi {

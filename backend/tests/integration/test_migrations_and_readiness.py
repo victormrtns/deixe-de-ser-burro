@@ -136,14 +136,19 @@ async def test_initial_migration_creates_every_specified_table(
     )
 
     assert tables == {
+        "ai_usage_entries",
         "alembic_version",
         "author_accounts",
         "author_sessions",
         "books",
+        "conversation_messages",
+        "conversations",
         "editorial_settings",
+        "generation_attempts",
         "idempotency_keys",
         "publication_topics",
         "publications",
+        "writing_memory_items",
         "writing_versions",
         "writings",
     }
@@ -169,7 +174,9 @@ async def test_readiness_rejects_a_database_behind_head(
         assert result.json()["error"]["code"] == "migration_not_ready"
         assert result.json()["error"]["message"] == "Banco aguardando migração."
     finally:
-        await session.execute(text("UPDATE alembic_version SET version_num = '0001_initial'"))
+        await session.execute(
+            text("UPDATE alembic_version SET version_num = '0002_contextual_ai_conversation'")
+        )
         await session.commit()
 
 

@@ -1,5 +1,6 @@
 import useSWR from 'swr'
 import { useApi } from '@/services/api'
+import type { HttpAppApi } from '@/services/contracts'
 
 export function usePublicLanding() {
   const api = useApi()
@@ -14,4 +15,9 @@ export function usePublicArticles() {
 export function usePublicBooks() {
   const api = useApi()
   return useSWR('public/books', () => api.public.listBooks())
+}
+
+export function usePublicArticle(slug: string) {
+  const api = useApi() as HttpAppApi
+  return useSWR(`public/articles/${slug}`, () => api.public.getArticle(slug))
 }

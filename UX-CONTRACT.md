@@ -40,6 +40,11 @@ Rotas 403, 404 e falhas usam páginas próprias, preservam navegação possível
 | Gravar áudio | “Gravar áudio” | tempo decorrido + “Parar” | cartão de processamento | reter blob local e repetir envio |
 | Aceitar sugestão | “Aceitar alteração” | ações do diff bloqueadas | nova versão visível | recarregar versão canônica |
 | Publicar | confirmação em diálogo | botão com geometria estável | URL pública + aviso de três dias | manter rascunho e explicar a falha |
+| Entrar | envio de e-mail e senha | botão ocupado sem salto de layout | retorno à rota privada solicitada | credencial inválida inline, preservando e-mail |
+| Sair | ação “Sair” na shell privada | sessão sendo revogada | landing pública sem acesso ao cache privado | permitir nova tentativa sem expor dados |
+| Sessão expirada | resposta `authentication_required` | preservar o texto local | redirecionar a `/entrar` com destino de retorno | nunca descartar edição silenciosamente |
+| Conflito de versão | autosave ou restauração com versão antiga | texto local permanece editável | recarregar versão canônica por ação explícita | nunca fazer merge silencioso |
+| Retirar publicação | “Voltar para rascunho” | ação ocupada | snapshot deixa de ser público | manter estado publicado e explicar falha |
 
 ## Navegação e foco
 
@@ -57,7 +62,7 @@ Estados assíncronos cobrem carregando, vazio, sem resultados, erro, cancelament
 
 Artigos públicos contêm apenas versão congelada e metadados públicos. Conversas, prompts, transcrições, áudios, sugestões e identificadores internos não aparecem no bundle nem nas respostas públicas.
 
-O orçamento aparece na shell privada como informação. A 80%, mostra aviso com texto e ícone; a 100%, explica que IA está pausada, enquanto edição e publicação continuam. O servidor permanece responsável pelo bloqueio real.
+O orçamento não aparece até existir medição real no backend. A interface nunca apresenta valores simulados como se fossem consumo do autor.
 
 ## Responsividade, locale e acessibilidade
 

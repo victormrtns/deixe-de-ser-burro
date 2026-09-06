@@ -12,13 +12,18 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 BUSINESS_TABLES = {
+    "ai_usage_entries",
     "author_accounts",
     "author_sessions",
     "books",
+    "conversation_messages",
+    "conversations",
+    "generation_attempts",
     "editorial_settings",
     "idempotency_keys",
     "publication_topics",
     "publications",
+    "writing_memory_items",
     "writing_versions",
     "writings",
 }
@@ -384,7 +389,7 @@ async def test_initial_migration_downgrades_to_no_business_tables_and_reupgrades
     try:
         async with verification_engine.connect() as connection:
             assert await connection.scalar(text("SELECT version_num FROM alembic_version")) == (
-                "0001_initial"
+                "0002_contextual_ai_conversation"
             )
     finally:
         await verification_engine.dispose()

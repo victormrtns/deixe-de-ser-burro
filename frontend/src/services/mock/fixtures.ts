@@ -2,15 +2,15 @@ import type { PublicArticleSummary, PublicBookSummary, PublicLanding, UsageSumma
 
 export const workspaceFixture: WorkspacePayload = {
   writing: { id: 'writing-deep-work-01', bookId: 'book-deep-work', title: 'Ritual antes do foco', markdown: '# Ritual antes do foco', sourceRange: 'Capítulos 3–4', status: 'draft', version: 4, updatedAt: '2026-08-28T10:21:00-03:00' },
-  messages: [{ id: 'message-01', writingId: 'writing-deep-work-01', role: 'author', content: 'Organize esta ideia.', createdAt: '2026-08-28T10:10:00-03:00' }],
+  messages: [{ id: 'message-01', writingId: 'writing-deep-work-01', role: 'author', content: 'Organize esta ideia.', state: 'completed', createdAt: '2026-08-28T10:10:00-03:00' }],
   audio: [{ id: 'audio-01', writingId: 'writing-deep-work-01', title: 'Ideia sobre o ritual', status: 'ready', durationSeconds: 214 }],
   suggestions: [{ id: 'suggestion-01', writingId: 'writing-deep-work-01', summary: 'Uma explicação mais linear', before: 'O foco começa.', after: 'O foco começa antes do trabalho.', status: 'pending' }],
 }
 
 export const usageFixtures: Record<'normal' | 'near-limit' | 'blocked', UsageSummary> = {
-  normal: { period: '2026-08', audioMinutes: 42, estimatedAiCostBrl: 12.4, monthlyLimitBrl: 70, limitState: 'normal' },
-  'near-limit': { period: '2026-08', audioMinutes: 188, estimatedAiCostBrl: 58, monthlyLimitBrl: 70, limitState: 'near_limit' },
-  blocked: { period: '2026-08', audioMinutes: 240, estimatedAiCostBrl: 70, monthlyLimitBrl: 70, limitState: 'blocked' },
+  normal: { period: '2026-08', spentUsdMicros: 120_000, reservedUsdMicros: 0, limitUsdMicros: 2_000_000, limitState: 'normal' },
+  'near-limit': { period: '2026-08', spentUsdMicros: 1_700_000, reservedUsdMicros: 40_000, limitUsdMicros: 2_000_000, limitState: 'near_limit' },
+  blocked: { period: '2026-08', spentUsdMicros: 2_000_000, reservedUsdMicros: 0, limitUsdMicros: 2_000_000, limitState: 'blocked' },
 }
 
 export const publicArticleFixtures: PublicArticleSummary[] = [

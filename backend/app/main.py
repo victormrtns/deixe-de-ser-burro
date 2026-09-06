@@ -6,6 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.assistant.router import router as assistant_router
 from app.auth.router import router as auth_router
 from app.db import get_session
 from app.errors import AppError, app_error_handler, request_validation_error_handler
@@ -16,7 +17,7 @@ from app.public_read.router import router as public_read_router
 from app.publishing.router import router as publishing_router
 from app.writings.router import router as writings_router
 
-EXPECTED_ALEMBIC_HEAD = "0001_initial"
+EXPECTED_ALEMBIC_HEAD = "0002_contextual_ai_conversation"
 SessionDependency = Annotated[AsyncSession, Depends(get_session)]
 
 
@@ -45,6 +46,7 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(library_router)
     app.include_router(writings_router)
+    app.include_router(assistant_router)
     app.include_router(publishing_router)
     app.include_router(public_files_router)
     app.include_router(public_read_router)

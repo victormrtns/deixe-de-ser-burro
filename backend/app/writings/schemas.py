@@ -6,6 +6,7 @@ from uuid import UUID
 
 from pydantic import Field, field_validator
 
+from app.assistant.schemas import MessageDto
 from app.schemas import ApiModel
 
 TEXT_FIELD_MAX_LENGTH = 500
@@ -74,6 +75,6 @@ class WritingVersionPage(ApiModel):
 
 class WorkspacePayload(ApiModel):
     writing: WritingDto
-    messages: list[Any] = Field(default_factory=list)
+    messages: list[MessageDto] = Field(default_factory=list)
     audio: list[Any] = Field(default_factory=list)
     suggestions: list[Any] = Field(default_factory=list)

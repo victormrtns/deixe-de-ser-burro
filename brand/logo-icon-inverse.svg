@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">deixedeserburro — o leitor curioso</title>
+  <desc id="desc">Um burro curioso de perfil, com orelhas assimétricas, emerge de um livro aberto. A fita laranja marca a página sobre um selo cor de papel.</desc>
+  <circle cx="160" cy="177" r="126" fill="#343433" />
+  <g transform="translate(2 5) scale(.94) rotate(4 158 182)">
+    <path d="M120 137C94 115 67 61 81 22C111 32 134 72 141 119Z" fill="#fbfaf9" />
+    <path d="M148 120C143 84 153 39 179 18C190 9 198 13 201 24C205 52 186 105 171 134Z" fill="#fbfaf9" />
+    <path d="M115 109C101 89 89 57 89 39C108 56 121 84 125 110Z" fill="#121212" />
+    <path d="M158 106C157 78 170 48 185 32C185 59 175 86 166 109Z" fill="#121212" />
+    <path d="M111 105L126 96L130 104L146 96L149 105C179 98 207 114 212 141L217 164C242 168 252 187 242 209C235 227 217 237 193 235L205 259Q165 281 111 265C115 242 107 226 101 199C89 177 88 137 104 117L96 112Z" fill="#fbfaf9" />
+    <path d="M151 113C177 102 201 119 204 145L208 174C223 171 240 180 240 195C241 213 225 228 207 228C194 229 183 225 177 217C160 225 139 218 133 201C128 184 141 171 144 157C146 144 139 125 151 113Z" fill="#121212" />
+    <path d="M157 139Q168 130 177 140" fill="none" stroke="#fbfaf9" stroke-width="5" stroke-linecap="round" />
+    <ellipse cx="172" cy="157" rx="6" ry="8" transform="rotate(-10 172 157)" fill="#fbfaf9" />
+    <path d="M224 189L229 186" stroke="#fbfaf9" stroke-width="6" stroke-linecap="round" />
+    <path d="M197 211Q211 217 225 207" fill="none" stroke="#fbfaf9" stroke-width="5" stroke-linecap="round" />
+  </g>
+  <g transform="translate(0 14) scale(1 .95)">
+    <path d="M74 231Q115 222 161 250Q203 224 251 229L244 278Q201 274 162 297Q121 278 82 281Z" fill="#fbfaf9" stroke="#fbfaf9" stroke-width="7" stroke-linejoin="round" />
+    <path d="M80 222Q118 221 161 245V286Q124 265 85 270Z" fill="#121212" />
+    <path d="M169 245Q207 219 245 221L239 269Q201 268 169 286Z" fill="#121212" />
+    <path d="M99 240Q124 240 145 252M100 252Q125 253 144 263M184 253Q206 240 227 239" fill="none" stroke="#343433" stroke-width="4" stroke-linecap="round" />
+    <path d="M208 226L223 223L220 258L212 253L204 261Z" fill="#ff3e00" />
+  </g>
+</svg>
