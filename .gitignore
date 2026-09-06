@@ -26,3 +26,8 @@ __pycache__/
 
 # TypeScript incremental build info
 *.tsbuildinfo
+
+# Respostas cruas das rodadas de avaliação: os .md legíveis bastam para repontuar.
+ia/evals/rodada-*/**/*.json
+ia/evals/rodada-*/*.json
+.worktree-ports.json
