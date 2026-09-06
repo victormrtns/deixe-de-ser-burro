@@ -2,7 +2,7 @@
 
 ## Contexto e objetivo
 
-Esta fase cria o primeiro backend executável do Entrelinhas. Ela substitui os mocks dos fluxos de biblioteca, escrita, versionamento e publicação por uma API FastAPI persistida em PostgreSQL, executada localmente com Docker Compose e preparada para uma implantação simples em VPS.
+Esta fase cria o primeiro backend executável do deixedeserburro. Ela substitui os mocks dos fluxos de biblioteca, escrita, versionamento e publicação por uma API FastAPI persistida em PostgreSQL, executada localmente com Docker Compose e preparada para uma implantação simples em VPS.
 
 O corte inclui publicação real porque o snapshot público, a separação entre dados privados e públicos e a janela de limpeza determinam o modelo de versões e as fronteiras dos módulos. A fase não implementa chat, transcrição, geração, sugestões de IA, controle de custo de IA nem processamento de links. Esses contratos podem continuar simulados no frontend até seus próprios ciclos de design e implementação.
 

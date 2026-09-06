@@ -82,7 +82,7 @@ frontend/
 
 - [ ] **Step 1: Write the identity brief into `DESIGN.md`**
 
-Use `Entrelinhas` as the working product name and define the North Star as “a living reading notebook: calm paper surfaces, visible marginalia, and one strong ink action.” Preserve the useful reference tokens while removing crypto-specific roles. Record these exact core tokens:
+Use `deixedeserburro` as the working product name and define the North Star as “a living reading notebook: calm paper surfaces, visible marginalia, and one strong ink action.” Preserve the useful reference tokens while removing crypto-specific roles. Record these exact core tokens:
 
 ```yaml
 ---
@@ -219,7 +219,7 @@ Expected: FAIL because `@/app/App` does not exist.
 
 ```tsx
 export function App() {
-  return <main aria-label="Entrelinhas">Entrelinhas</main>
+  return <main aria-label="deixedeserburro">deixedeserburro</main>
 }
 ```
 

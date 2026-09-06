@@ -53,7 +53,7 @@ components:
 
 ## Overview
 
-Entrelinhas é um caderno vivo de leitura: superfícies calmas de papel, marginalia visível e uma única ação forte em tinta. A área privada é um instrumento de escrita para um autor; a área pública é uma estante editorial para leitores. O produto deve parecer habitado por ideias em andamento, sem imitar um editor corporativo, um dashboard de métricas ou um scrapbook infantil.
+deixedeserburro é um caderno vivo de leitura: superfícies calmas de papel, marginalia visível e uma única ação forte em tinta. A área privada é um instrumento de escrita para um autor; a área pública é uma estante editorial para leitores. O produto deve parecer habitado por ideias em andamento, sem imitar um editor corporativo, um dashboard de métricas ou um scrapbook infantil.
 
 A assinatura é o **trilho de marginalia**. Áudio, prompt, fonte e sugestão aceita aparecem como pequenas marcas coloridas alinhadas ao documento. A marca conecta o momento de pensar ao trecho escrito sem virar a única forma de acessar o evento. Ilustrações expressivas ficam restritas a estados vazios e capas públicas; o estúdio permanece silencioso e utilitário.
 

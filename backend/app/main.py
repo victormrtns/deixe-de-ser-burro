@@ -39,7 +39,7 @@ async def readiness(session: AsyncSession) -> dict[str, str]:
 
 def create_app() -> FastAPI:
     configure_logging()
-    app = FastAPI(title="Entrelinhas API")
+    app = FastAPI(title="deixedeserburro API")
     app.add_middleware(RequestObservabilityMiddleware)
     app.add_exception_handler(AppError, app_error_handler)
     app.add_exception_handler(RequestValidationError, request_validation_error_handler)

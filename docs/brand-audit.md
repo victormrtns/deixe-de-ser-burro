@@ -185,7 +185,9 @@ Recomendo uma passada curta trocando o título por `# deixedeserburro — Style 
 
 ## 7. Apêndice — "Entrelinhas" fora do frontend (52 ocorrências, 20 arquivos)
 
-Não tocado, por instrução (`ia/` e `docs/` estão sendo editados por outros agentes; identificadores de infra não devem mudar aqui). Lista para uma passada separada:
+> **Resolvido em 2026-09-06.** A prosa (`UX-CONTRACT.md`, `ia/`, `docs/`, `DESIGN.md`, `Description=` das units) e as strings de backend que chegam ao usuário/modelo foram renomeadas. Os identificadores de infra permanecem `entrelinhas` por decisão registrada em `README.md`.
+
+Não tocado à época (`ia/` e `docs/` estão sendo editados por outros agentes; identificadores de infra não devem mudar aqui). Lista para uma passada separada:
 
 **Contrato (o mais urgente — ficou desatualizado no instante em que os títulos mudaram):**
 - `UX-CONTRACT.md` — 7 ocorrências, incluindo a **tabela de rotas e títulos inteira** (linhas 15–20), que agora descreve títulos que o frontend não emite mais.

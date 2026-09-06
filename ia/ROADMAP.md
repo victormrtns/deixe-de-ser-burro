@@ -2,7 +2,7 @@
 
 ## Propósito
 
-Este roadmap guia o desenvolvimento da IA do Entrelinhas e o aprendizado do
+Este roadmap guia o desenvolvimento da IA do deixedeserburro e o aprendizado do
 autor em paralelo. Cada parte deve produzir uma capacidade real do produto,
 uma decisão arquitetural documentada e evidências de qualidade.
 
@@ -244,7 +244,7 @@ Produzir, sem código:
 
 - definir o caso de uso da Parte 1;
 - listar o que é probabilístico e o que deve ser determinístico;
-- desenhar as três camadas aplicadas ao Entrelinhas.
+- desenhar as três camadas aplicadas ao deixedeserburro.
 
 ### Bloco 2 — 60 min: capítulo 2 do livro
 

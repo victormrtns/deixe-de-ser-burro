@@ -31,3 +31,6 @@ __pycache__/
 ia/evals/rodada-*/**/*.json
 ia/evals/rodada-*/*.json
 .worktree-ports.json
+
+# Worktrees de agentes
+.claude/worktrees/
