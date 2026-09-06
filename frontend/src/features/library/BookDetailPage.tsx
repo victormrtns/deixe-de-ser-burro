@@ -18,7 +18,7 @@ export function BookDetailPage() {
   if (bookError || writingsError) return <main className="book-detail"><h1>Não foi possível abrir este livro</h1><NeutralButton onClick={() => void Promise.all([retryBook(), mutate()])}>Tentar novamente</NeutralButton></main>
   if (!book || !writings) return <main className="book-detail" aria-label="Carregando livro">Abrindo livro…</main>
 
-  return <main className="book-detail" aria-label="Entrelinhas">
+  return <main className="book-detail" aria-label="deixedeserburro">
     <button className="detail-back" type="button" onClick={() => navigate('/studio')}><ArrowLeft size={16} /> Biblioteca</button>
     <section className="book-hero"><div className="detail-cover"><small>01</small><i /><span /></div><div><span className="eyebrow">Livro em leitura</span><h1>{book.title}</h1><p>{book.author}</p><div className="book-facts"><span><strong>{writings.length}</strong> escritas</span></div></div></section>
     <section><div className="section-title"><div><small>01</small><h2>Escritas deste livro</h2></div><PrimaryButton onClick={() => setDialogOpen(true)} icon={<Plus size={16} />}>Nova escrita</PrimaryButton></div>

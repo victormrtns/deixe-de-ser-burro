@@ -18,7 +18,7 @@ it('permite leitura pública sem autenticação', async () => {
 it('redireciona a rota privada para entrada quando não há sessão', async () => {
   renderRoute('/studio', 'anonymous')
   expect(await screen.findByRole('heading', { name: 'Volte ao seu caderno' })).toBeVisible()
-  expect(document.title).toBe('Entrar — Entrelinhas')
+  expect(document.title).toBe('Entrar — deixedeserburro')
 })
 
 it('retorna à rota privada solicitada depois do login', async () => {
@@ -41,10 +41,10 @@ it('renderiza páginas próprias para 403 e 404', async () => {
 })
 
 it.each([
-  ['/artigos', 'Artigos — Entrelinhas'],
-  ['/livros', 'Livros — Entrelinhas'],
-  ['/livros/trabalho-focado', 'Trabalho focado — Entrelinhas'],
-  ['/sobre', 'Sobre — Entrelinhas'],
+  ['/artigos', 'Artigos — deixedeserburro'],
+  ['/livros', 'Livros — deixedeserburro'],
+  ['/livros/trabalho-focado', 'Trabalho focado — deixedeserburro'],
+  ['/sobre', 'Sobre — deixedeserburro'],
 ])('renderiza a rota pública %s com título honesto', async (path, title) => {
   const { unmount } = renderRoute(path)
 

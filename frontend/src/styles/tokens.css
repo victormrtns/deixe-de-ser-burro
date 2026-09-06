@@ -1,21 +1,44 @@
+/*
+ * Paleta canonica: design.md (decisao do autor, 2026-09-05).
+ * DESIGN.md esta superado e nao deve ser usado como fonte.
+ * Cada token abaixo cita o nome do papel em design.md.
+ */
 :root {
-  --color-canvas: #fbfaf9;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f2f0ed;
-  --color-ink: #121212;
-  --color-text: #343433;
-  --color-text-muted: #6f6d69;
-  --color-border: #e5d5c3;
-  --color-link: #0086fc;
-  --color-annotation: #ff3e00;
-  --color-pending: #d48f00;
-  --color-success: #007a4d;
-  --color-danger: #c91d2e;
-  --color-focus: #0086fc;
+  --color-canvas: #fbfaf9;          /* Cream Canvas */
+  --color-surface: #ffffff;         /* Pure White */
+  --color-surface-muted: #f2f0ed;   /* Stone Surface */
+  --color-ink: #121212;             /* Ink Black */
+  --color-text: #343433;            /* Heading Charcoal */
+  --color-text-muted: #474645;      /* Body Brown */
+  --color-border: #e5d5c3;          /* Stone Border */
+  --color-link: #0073d8;            /* Link Blue */
+  --color-annotation: #d93500;      /* Ember Orange */
+  --color-focus: #0073d8;
+
+  /*
+   * Status. design.md marca mint, grass-green e alert-red como
+   * "supporting accent, not a status color" e descreve o Status Badge Pill
+   * como fundo no acento + texto escuro. Logo: o acento carrega o FUNDO,
+   * o texto vai em --color-status-ink. Nenhum destes vira texto colorido
+   * sobre papel creme (verde 2.1:1, ouro 2.6:1, vermelho 3.6:1 reprovam AA).
+   */
+  --color-pending: #ffbb26;         /* Honey */
+  --color-success: #00ca48;         /* Mint */
+  --color-danger: #ff2b3a;          /* Alert Red */
+  --color-status-ink: #121212;      /* Ink Black sobre qualquer acento: 5.0-11.1:1 */
+
+  /* Ilustracao: capas, paineis decorativos e estados vazios apenas. */
+  --color-illustration-sky: #64c6ff;  /* Sky Blue */
+  --color-illustration-sun: #ffcd6c;  /* Sun Yellow */
+  --color-annotation-wash: color-mix(in srgb, var(--color-annotation) 18%, var(--color-canvas));
+
+  /* Hover: design.md nao especifica estados. Derivados da propria paleta. */
+  --color-ink-hover: color-mix(in srgb, var(--color-ink) 92%, var(--color-canvas));
+  --color-danger-hover: color-mix(in srgb, var(--color-danger) 88%, var(--color-ink));
 
   --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', Inter, sans-serif;
   --font-body: 'Inter Variable', Inter, system-ui, sans-serif;
-  --font-code: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-code: 'IBM Plex Mono', ui-monospace, monospace;  /* design.md nao define face mono */
 
   --radius-small: 6px;
   --radius-card: 10px;
@@ -24,9 +47,11 @@
   --space-unit: 4px;
 
   --shadow-surface: inset 0 0 0 1px var(--color-surface-muted);
-  --shadow-overlay: 0 24px 80px rgb(18 18 18 / 18%);
+  --shadow-overlay: 0 0 24px 0 rgb(0 0 0 / 15%);
+  --shadow-raised: 0 1px 6px 0 rgb(0 0 0 / 4%), 0 0 24px 0 rgb(0 0 0 / 5%);
   --focus-ring: 0 0 0 3px rgb(0 134 252 / 24%);
 
+  /* Scrollbar: design.md nao define este papel. Valores preservados. */
   --scrollbar-track: var(--color-surface-muted);
   --scrollbar-thumb: #a8a39c;
   --scrollbar-thumb-hover: #77726c;

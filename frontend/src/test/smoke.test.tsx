@@ -6,9 +6,9 @@ import { AppProviders } from '@/app/AppProviders'
 import { createAppRouter } from '@/app/router'
 import { createMockApi } from '@/services/mockApi'
 
-it('renderiza o marco principal do Entrelinhas', async () => {
+it('renderiza o marco principal do deixedeserburro', async () => {
   render(<AppProviders api={createMockApi()}><RouterProvider router={createAppRouter(['/studio'])} /></AppProviders>)
-  expect(await screen.findByRole('main', { name: 'Entrelinhas' })).toBeInTheDocument()
+  expect(await screen.findByRole('main', { name: 'deixedeserburro' })).toBeInTheDocument()
 })
 
 it('não monta o adaptador mock no entrypoint de produção', () => {

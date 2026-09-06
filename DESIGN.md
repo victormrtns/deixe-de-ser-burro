@@ -34,7 +34,22 @@ components:
     color: "#0086fc"
 ---
 
-# Entrelinhas — identidade visual
+> [!IMPORTANT]
+> **Documento superado. Não implemente a partir daqui.**
+>
+> Por decisão do autor (2026-09-05), **`design.md` é a fonte canônica de cor,
+> tipografia e linguagem visual** do produto, e `brand/` é a fonte canônica dos
+> ativos. `frontend/src/styles/tokens.css` segue `design.md`.
+>
+> O frontmatter YAML acima diverge do canônico em pontos que já causaram
+> implementação errada — `success`, `danger` e `textMuted` não existem em
+> `design.md`, e a face de display correta é Bricolage Grotesque (ver
+> `brand/README.md`). O padrão de status correto é **fundo no acento + texto
+> escuro**, não texto colorido.
+>
+> Mantido apenas como registro histórico. Ver `docs/brand-audit.md`.
+
+# deixedeserburro — identidade visual
 
 ## Overview
 

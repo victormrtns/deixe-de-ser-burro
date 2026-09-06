@@ -1,9 +1,9 @@
-# Family — Style Reference
+# deixedeserburro — Style Reference
 > storybook spread on cream parchment
 
 **Theme:** light
 
-Family speaks in a warm parchment-and-marker language: a cream canvas (#fbfaf9) carries hand-drawn characters and scattered confetti shapes in primary-bright fills, while typography stays calm and utilitarian in Inter. The interface itself is deliberately restrained — inset hairline borders define surfaces rather than shadows — so the cartoon illustrations carry all the emotional weight and the chrome stays quiet. Color functions as semantic markers: near-black for the one serious action, blue and orange for status, gold and green for positive signals, red and pink for destructive/attention. Every screen should feel like a children's storybook spread: generous whitespace, big confident headings, and a few vivid characters punctuating an otherwise monochrome layout.
+deixedeserburro speaks in a warm parchment-and-ink language: a cream canvas (#fbfaf9) carries heavy-stroke line art — the donkey mark and its engraved cousins — while typography stays calm and utilitarian in Inter over a Bricolage Grotesque display face. The interface itself is deliberately restrained — inset hairline borders define surfaces rather than shadows — so the drawing carries the emotional weight and the chrome stays quiet. Color functions as semantic markers: near-black for the one serious action, blue for links, ember for annotation, gold and green for positive signals, red for destructive. Status colour never lives in text: the accent carries the ground and the text stays ink, which is what keeps the palette accessible on paper cream. Every screen should read like a printed page: generous whitespace, big confident headings, and one drawn mark punctuating an otherwise monochrome layout.
 
 ## Tokens — Colors
 
@@ -16,12 +16,12 @@ Family speaks in a warm parchment-and-marker language: a cream canvas (#fbfaf9) 
 | Body Brown | `#474645` | `--color-body-brown` | Body copy, secondary text — warm desaturated brown rather than cool gray |
 | Muted Gray | `#7e7e7d` | `--color-muted-gray` | Helper text, inactive nav, tertiary labels |
 | Stone Border | `#e5d5c3` | `--color-stone-border` | Hairline decorative borders on illustrations and shapes |
-| Link Blue | `#0086fc` | `--color-link-blue` | Inline links, feature list text — vivid blue that reads as actionable without being a button |
+| Link Blue | `#0073d8` | `--color-link-blue` | Inline links, feature list text — vivid blue that reads as actionable without being a button. Escurecido da referência `#0086fc` (3,46:1) para alcançar WCAG AA 4,5:1 sobre creme e sobre branco; matiz e saturação inalterados |
 | Sky Blue | `#64c6ff` | `--color-sky-blue` | Illustration fill, decorative mascot accents — sky-bright for storybook characters |
 | Alt Blue | `#00b2ff` | `--color-alt-blue` | Secondary illustration fill, icon accents — slightly deeper blue for variation |
 | Grass Green | `#00c978` | `--color-grass-green` | Green text accent for links, tags, and emphasized short phrases. Use as a supporting accent, not as a status color |
 | Mint | `#00ca48` | `--color-mint` | Green wash for highlight backgrounds, decorative bands, and soft emphasis behind content. Use as a supporting accent, not as a status color |
-| Ember Orange | `#ff3e00` | `--color-ember-orange` | Orange text accent for links, tags, and emphasized short phrases |
+| Ember Orange | `#d93500` | `--color-ember-orange` | Orange text accent for links, tags, and emphasized short phrases. Escurecido da referência `#ff3e00` (3,39:1) pelo mesmo motivo. A marca em `brand/` mantém o ember original na fita do livro, onde regra de contraste não se aplica |
 | Sun Yellow | `#ffcd6c` | `--color-sun-yellow` | Illustration fill, decorative shapes, mascot coloring |
 | Gold | `#d48f00` | `--color-gold` | Yellow text accent for links, tags, and emphasized short phrases. |
 | Honey | `#ffbb26` | `--color-honey` | Yellow wash for highlight backgrounds, decorative bands, and soft emphasis behind content |
@@ -31,13 +31,13 @@ Family speaks in a warm parchment-and-marker language: a cream canvas (#fbfaf9) 
 
 ## Tokens — Typography
 
-### Family — Display and hero headings — the custom Family typeface at weight 500, letter-spacing tightening to -0.031em at 68px creates a slightly playful, slightly condensed character that defines the brand · `--font-family`
-- **Substitute:** Druk Wide Medium or GT America Compressed Medium
+### Bricolage Grotesque — Display and hero headings — a variable grotesque at weight 500, letter-spacing tightening to -0.031em at 68px, giving a slightly playful, slightly condensed character that defines the brand · `--font-family`
+- **Substitute:** Bricolage Grotesque (Google Fonts, variable) — this is the face the shipped brand assets in `brand/` are drawn in; the wordmark uses weight 400 on `deixedeser` and 750 on `burro`, converted to outlines
 - **Weights:** 500
 - **Sizes:** 44px, 68px
 - **Line height:** 1.09-1.10
 - **Letter spacing:** -0.031em at 68px, -0.020em at 44px
-- **Role:** Display and hero headings — the custom Family typeface at weight 500, letter-spacing tightening to -0.031em at 68px creates a slightly playful, slightly condensed character that defines the brand
+- **Role:** Display and hero headings — Bricolage Grotesque at weight 500, letter-spacing tightening to -0.031em at 68px, giving a slightly playful, slightly condensed character that defines the brand
 
 ### Inter — Body copy, nav text, card descriptions — Inter at regular weight carries the utility layer; tighter line-heights (1.42-1.53) for running text, generous (1.58) for caption-level · `--font-inter`
 - **Substitute:** Inter (Google Fonts)
@@ -157,7 +157,7 @@ Background #f6f4ef (lighter than canvas), text #121212, 32px pill radius, 14px h
 ### Inline Demo Link
 **Role:** Feature-card watch-the-demo link
 
-Underlined text link, no border, no background padding beyond 4px vertical. Color is #ff3e00 (ember orange) — this is the brand's signature secondary CTA color, used wherever a 'Watch the demo' or 'Manage your collectibles' link sits beneath a feature card. Border-radius 0 to read as text.
+Underlined text link, no border, no background padding beyond 4px vertical. Color is #d93500 (ember orange) — this is the brand's signature secondary CTA color, used wherever a 'Watch the demo' or 'Manage your collectibles' link sits beneath a feature card. Border-radius 0 to read as text.
 
 ### Feature Card (Hairline-Bordered)
 **Role:** Primary card for the 6-feature grid (Easy, Secure, Fast, Powerful, Fun, etc.)
@@ -197,22 +197,22 @@ The signature border technique: 1px inset box-shadow in #f2f0ed creates an inter
 ## Do's and Don'ts
 
 ### Do
-- Use the custom Family typeface at 44-68px weight 500 for all display and hero headings; never substitute system fonts at this scale
+- Use Bricolage Grotesque at 44-68px weight 500 for all display and hero headings; never substitute system fonts at this scale
 - Use 10px radius as the default for cards and nav surfaces; use 32-9999px only for pill buttons and badges
 - Build card definition with a 1px inset border in #f2f0ed rather than a drop shadow — the page should feel pressed into paper, not floating
-- Let #ff3e00 carry the 'demo link' and accent text role; keep ember orange for inline links and feature callouts, never as a filled button
+- Let #d93500 carry the 'demo link' and accent text role; keep ember orange for inline links and feature callouts, never as a filled button
 - Set body text in Inter 400 at 16-17px with line-height 1.42-1.53 and letter-spacing -0.013 to -0.016em
 - Use the cream canvas (#fbfaf9) as the base for every full-bleed section; alternate by introducing the #f2f0ed stone surface for grouped card clusters
 - Use illustration clusters of cartoon mascots in primary fills to anchor hero sections; scatter them asymmetrically so the centered text remains the focal point
 
 ### Don't
 - Never use a drop shadow larger than rgba(0,0,0,0.04) — the design system rejects heavy elevation
-- Don't use blue (#0086fc) as a filled CTA background; blue is reserved for inline links and list emphasis text
+- Don't use blue (#0073d8) as a filled CTA background; blue is reserved for inline links and list emphasis text
 - Don't introduce gradients — the system is strictly flat with hairline inset borders
-- Don't use Inter at the display sizes — display and hero headings must use the Family typeface at weight 500
+- Don't use Inter at the display sizes — display and hero headings must use Bricolage Grotesque at weight 500
 - Don't separate surfaces with white-on-white; always shift toward #f2f0ed stone or toward #121212 black for clear contrast
 - Don't add decoration to pill buttons — dark pill (#121212) and sand pill (#f6f4ef) are the only two pill variants
-- Don't use warm reds (#ff2b3a) for anything beyond destructive/error states; the warm accent slot belongs to #ff3e00
+- Don't use warm reds (#ff2b3a) for anything beyond destructive/error states; the warm accent slot belongs to #d93500
 
 ## Surfaces
 
@@ -233,7 +233,7 @@ The signature border technique: 1px inset box-shadow in #f2f0ed creates an inter
 
 ## Imagery
 
-Illustration is the primary visual language: hand-drawn cartoon mascots (flower with square face, smiling green blob, yellow triangle character, orange cloud, cat) with dot eyes and stick limbs, rendered in flat fills from the accent palette (sky blue #64c6ff, sun yellow #ffcd6c, grass green #00c978, ember orange #ff3e00, coral pink #ff58ae). Scattered confetti shapes (coins, stars, hearts, gears, leaves, lock icons, QR markers) fill the negative space around them. All illustration strokes are #343433 at thin weight. Mascots use generous organic radii (40-72px). The illustrations are full-bleed on the left and right of the hero, then appear as smaller accents inside cards throughout the rest of the page. Photography is absent; phone mockups in the lower section show dark iOS UI screenshots. Icon style is solid filled circles in saturated brand colors, mono-weight.
+Illustration is the primary visual language, and it is heavy-stroke line art — not flat cartoon fills. The mark is a curious donkey (`burro`) in profile emerging from an open book, with long asymmetric ears and an orange ribbon marking the page, held inside an oldschool roundel. Drawing is built from thick, confident contours in ink black (#121212) over paper cream (#fbfaf9); the seal ring and page rules are stone border (#e5d5c3) and the ribbon is ember orange (#ff3e00). Weight lives in the stroke, not in the fill: shapes read as engraved or woodcut, never as sticker-flat mascots with dot eyes and stick limbs. The canonical artwork ships in `brand/` (`logo.svg`, `logo-icon.svg`, `wordmark.svg`, `favicon.svg`, plus `brand/png/` at 16-1024px) and is vector, font-independent, and not to be redrawn ad hoc — use the shipped file. Sizing follows `brand/README.md`: the simplified favicon portrait from 16 to 48px, the full mascot from 64px, the horizontal signature at 320px wide or more, always with clear space of 10% of the symbol width. On dark ground use the inverse variants so the ears stay readable. Illustration stays out of the editor, the chat and the suggestion review; it belongs to empty states, public covers and the brand signature. The accent fills (sky blue #64c6ff, sun yellow #ffcd6c, grass green #00c978, coral pink #ff58ae) are for covers and decorative panels only and never carry status meaning. Photography is absent. Icon style in the product chrome is mono-weight line, matching the mark's stroke logic.
 
 ## Layout
 
@@ -245,14 +245,14 @@ Quick Color Reference:
 - text: #343433 (heading), #474645 (body)
 - background: #fbfaf9 (canvas)
 - border: inset 1px #f2f0ed
-- accent (links/demo): #ff3e00
-- accent (features): #0086fc
+- accent (links/demo): #d93500
+- accent (features): #0073d8
 - primary action: #121212 (filled action)
 
 3-5 Example Component Prompts:
 1. Create a Primary Action Button: #121212 background, #fbfaf9 text, 9999px radius, compact pill padding. Use this filled treatment for the main CTA.
 
-2. Create a feature card grid (3 columns): white cards (#ffffff), 10px radius, 1px inset border #f2f0ed, 32px padding all sides. Heading at 23px Inter 500, #343433. Body at 16px Inter 400, #474645. 8-12px gap between cards. Underneath each card, an ember-orange (#ff3e00) inline 'Watch the demo' link with underline.
+2. Create a feature card grid (3 columns): white cards (#ffffff), 10px radius, 1px inset border #f2f0ed, 32px padding all sides. Heading at 23px Inter 500, #343433. Body at 16px Inter 400, #474645. 8-12px gap between cards. Underneath each card, an ember-orange (#d93500) inline 'Watch the demo' link with underline.
 
 3. Create a dark feature card: background #000000, 24px left-radius (asymmetric), 24px soft shadow at rgba(0,0,0,0.15). Inside, stacked rows each with a 40px circular icon (colors #0090ff, #9f4fff, #00ca48, #ff58ae), label in white Inter 600, helper text in rgba(255,255,255,0.6) at 13px.
 
@@ -282,12 +282,12 @@ Quick Color Reference:
   --color-body-brown: #474645;
   --color-muted-gray: #7e7e7d;
   --color-stone-border: #e5d5c3;
-  --color-link-blue: #0086fc;
+  --color-link-blue: #0073d8;
   --color-sky-blue: #64c6ff;
   --color-alt-blue: #00b2ff;
   --color-grass-green: #00c978;
   --color-mint: #00ca48;
-  --color-ember-orange: #ff3e00;
+  --color-ember-orange: #d93500;
   --color-sun-yellow: #ffcd6c;
   --color-gold: #d48f00;
   --color-honey: #ffbb26;
@@ -296,7 +296,7 @@ Quick Color Reference:
   --color-alert-red: #ff2b3a;
 
   /* Typography — Font Families */
-  --font-family: 'Family', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Typography — Scale */
@@ -402,12 +402,12 @@ Quick Color Reference:
   --color-body-brown: #474645;
   --color-muted-gray: #7e7e7d;
   --color-stone-border: #e5d5c3;
-  --color-link-blue: #0086fc;
+  --color-link-blue: #0073d8;
   --color-sky-blue: #64c6ff;
   --color-alt-blue: #00b2ff;
   --color-grass-green: #00c978;
   --color-mint: #00ca48;
-  --color-ember-orange: #ff3e00;
+  --color-ember-orange: #d93500;
   --color-sun-yellow: #ffcd6c;
   --color-gold: #d48f00;
   --color-honey: #ffbb26;
@@ -416,7 +416,7 @@ Quick Color Reference:
   --color-alert-red: #ff2b3a;
 
   /* Typography */
-  --font-family: 'Family', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Typography — Scale */
