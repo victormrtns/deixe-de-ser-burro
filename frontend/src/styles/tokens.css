@@ -11,9 +11,9 @@
   --color-text: #343433;            /* Heading Charcoal */
   --color-text-muted: #474645;      /* Body Brown */
   --color-border: #e5d5c3;          /* Stone Border */
-  --color-link: #0086fc;            /* Link Blue */
-  --color-annotation: #ff3e00;      /* Ember Orange */
-  --color-focus: #0086fc;
+  --color-link: #0073d8;            /* Link Blue */
+  --color-annotation: #d93500;      /* Ember Orange */
+  --color-focus: #0073d8;
 
   /*
    * Status. design.md marca mint, grass-green e alert-red como
