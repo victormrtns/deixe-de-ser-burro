@@ -1,6 +1,9 @@
 # Marca — deixedeserburro
 
-![Assinatura principal](logo.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="logo-inverse.png">
+  <img src="logo.png" alt="Assinatura principal do deixedeserburro" width="560">
+</picture>
 
 Esta pasta contém somente a versão final da marca e suas aplicações. O mascote é um burro curioso com um livro aberto; a fita laranja marca a página.
 

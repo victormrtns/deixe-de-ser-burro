@@ -1,9 +1,8 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/logo-inverse.png">
-    <img src="brand/logo.png" alt="deixedeserburro" width="560">
-  </picture>
+  <img src="brand/logo-icon.png" alt="" width="132">
 </p>
+
+<h1 align="center">deixedeserburro</h1>
 
 <p align="center">
   <strong>Um caderno de leitura e escrita com assistência de IA.</strong><br>
