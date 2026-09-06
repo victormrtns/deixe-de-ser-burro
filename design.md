@@ -81,7 +81,7 @@ deixedeserburro speaks in a warm parchment-and-ink language: a cream canvas (#fb
 |------|------|-------------|----------------|-------|
 | micro | 12px | 19 | -0.01px | `--text-micro` |
 | caption | 15px | 22 | -0.14px | `--text-caption` |
-| body | 17px | 26 | -0.22px | `--text-body` |
+| body | 15px | 23 | 0 | `--text-body` |
 | subheading | 19px | 27 | -0.3px | `--text-subheading` |
 | heading | 23px | 25 | -0.44px | `--text-heading` |
 | heading-lg | 44px | 53 | -0.88px | `--text-heading-lg` |
@@ -318,9 +318,9 @@ Quick Color Reference:
   --text-caption: 15px;
   --leading-caption: 22;
   --tracking-caption: -0.14px;
-  --text-body: 17px;
-  --leading-body: 26;
-  --tracking-body: -0.22px;
+  --text-body: 15px;
+  --leading-body: 23;
+  --tracking-body: 0;
   --text-subheading: 19px;
   --leading-subheading: 27;
   --tracking-subheading: -0.3px;
@@ -438,9 +438,9 @@ Quick Color Reference:
   --text-caption: 15px;
   --leading-caption: 22;
   --tracking-caption: -0.14px;
-  --text-body: 17px;
-  --leading-body: 26;
-  --tracking-body: -0.22px;
+  --text-body: 15px;
+  --leading-body: 23;
+  --tracking-body: 0;
   --text-subheading: 19px;
   --leading-subheading: 27;
   --tracking-subheading: -0.3px;

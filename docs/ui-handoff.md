@@ -137,11 +137,13 @@ própria, fora das quatro formas.
 O "trilho de marginalia" do `DESIGN.md` superado. Não é renderizado e não tem uma linha
 de CSS. Decidir se volta como conceito ou se sai.
 
-### 6. Corpo de texto: 15px ou 17px
+### 6. Corpo de texto — decidido: 15px
 
-`design.md` fixa `--text-body: 17px`; o produto usa 15px em `body`. Divergência real e
-antiga, agora marcada no próprio `design.md`. Mudar reflui todas as telas. Decisão do
-autor, ainda aberta.
+`design.md` trazia `--text-body: 17px`, herdado da referência de origem, e o produto
+sempre usou 15px em `body`. O autor decidiu por **15px** em 2026-09-06: o estúdio é
+ferramenta de trabalho e não página de marketing, e a leitura pública já ganha escala
+pela classe `.prose`, que usa `clamp(1rem, 0.96rem + 0.2vw, 1.125rem)`. `design.md` foi
+corrigido; nenhuma mudança de código, porque o produto já estava assim.
 
 ### 7. Dois diálogos, duas implementações
 
